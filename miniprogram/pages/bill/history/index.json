@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "历史账单",
+  "usingComponents": {
+    "van-button": "@vant/weapp/button/index",
+    "ec-canvas": "../../../miniprogram_npm/ec-canvas/ec-canvas"
+  }
+}

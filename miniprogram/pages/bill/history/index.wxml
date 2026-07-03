@@ -1,0 +1,36 @@
+<view class="container">
+  <view class="room-label">{{ roomLabel }}</view>
+
+  <view class="table">
+    <view class="tr th">
+      <text class="td">月份</text>
+      <text class="td">租金</text>
+      <text class="td">水</text>
+      <text class="td">电</text>
+      <text class="td">其他</text>
+      <text class="td right">合计</text>
+    </view>
+    <view wx:for="{{ history }}" wx:key="year_month"
+      class="tr {{ item.highlight ? 'highlight' : '' }}"
+      hover-class="tr-hover"
+      data-yearmonth="{{ item.year_month }}"
+      bindtap="onTapRow"
+    >
+      <text class="td">{{ item.year_month }}</text>
+      <text class="td">{{ item.rent }}</text>
+      <text class="td">{{ item.water_fee }}</text>
+      <text class="td">{{ item.elec_fee }}</text>
+      <text class="td">{{ item.other }}</text>
+      <text class="td right">{{ item.total }}</text>
+    </view>
+  </view>
+
+  <view class="section-title">水/电用量趋势</view>
+  <view class="chart">
+    <ec-canvas id="history-chart" canvas-id="history-chart" ec="{{ ec }}"></ec-canvas>
+  </view>
+
+  <view class="footer">
+    <van-button type="primary" block bind:click="onExport">导出 CSV</van-button>
+  </view>
+</view>

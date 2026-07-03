@@ -1,0 +1,12 @@
+.container { padding: 24rpx; }
+.room-label { font-size: 30rpx; font-weight: 600; margin-bottom: 16rpx; }
+.table { border: 1rpx solid #eee; border-radius: 8rpx; overflow: hidden; background: #fff; margin-bottom: 30rpx; }
+.tr { display: flex; padding: 16rpx 12rpx; border-bottom: 1rpx solid #f0f0f0; font-size: 24rpx; }
+.tr.th { background: #f6f6f6; font-weight: 600; }
+.tr-hover { background: #f0f0f0; }
+.td { flex: 1; text-align: center; }
+.td:first-child { flex: 1.2; text-align: left; }
+.td.right { flex: 1.2; text-align: right; font-weight: 600; color: #e54545; }
+.section-title { font-size: 26rpx; color: #888; padding: 12rpx 0; }
+.chart { width: 100%; height: 480rpx; }
+.footer { padding: 30rpx 0; }
