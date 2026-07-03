@@ -1,0 +1,20 @@
+<view class="container">
+  <view class="header">
+    <view class="title">本月 ({{ currentYM }}): ¥{{ sumTotal }}</view>
+    <van-button size="mini" bind:click="onSettings">⚙️</van-button>
+  </view>
+  <view class="cards">
+    <room-card
+      wx:for="{{ rooms }}"
+      wx:key="_id"
+      room="{{ item.room }}"
+      bill-total="{{ item.billTotal }}"
+      has-bill="{{ item.hasBill }}"
+      bill-label="{{ item.billLabel }}"
+      is-active="{{ item.room.status === 'active' }}"
+      bind:settings="onSettings"
+      bind:generate="onGenerate"
+      bind:history="onHistory"
+    />
+  </view>
+</view>

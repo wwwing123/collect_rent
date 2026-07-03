@@ -1,0 +1,17 @@
+.container {
+  padding: 24rpx;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 12rpx 30rpx;
+}
+.title {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+.cards {
+  display: flex;
+  flex-direction: column;
+}

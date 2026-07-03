@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "收租",
+  "usingComponents": {
+    "room-card": "/components/roomCard/index",
+    "van-button": "@vant/weapp/button/index"
+  }
+}
