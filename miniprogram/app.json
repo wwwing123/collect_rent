@@ -4,7 +4,8 @@
     "pages/rooms/index",
     "pages/bill/edit/index",
     "pages/bill/history/index",
-    "pages/unauthorized/index"
+    "pages/unauthorized/index",
+    "pages/settings/index"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",

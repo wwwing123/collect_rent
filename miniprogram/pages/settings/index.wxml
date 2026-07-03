@@ -1,0 +1,7 @@
+<view class="container">
+  <view class="row">
+    <text class="label">家庭邀请码</text>
+    <text class="code" bindtap="onCopy">{{ code }}</text>
+  </view>
+  <van-button type="warning" block bind:click="onRegenerate">重新生成</van-button>
+</view>

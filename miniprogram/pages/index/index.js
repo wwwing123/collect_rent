@@ -51,6 +51,10 @@ Page({
     this.setData({ rooms, currentYM: ym, sumTotal: sum.toFixed(2) });
   },
 
+  onHeaderSettings() {
+    wx.navigateTo({ url: '/pages/settings/index' });
+  },
+
   onSettings(e) {
     const roomId = e.detail?.roomId;
     if (roomId) {

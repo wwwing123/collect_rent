@@ -1,7 +1,7 @@
 <view class="container">
   <view class="header">
     <view class="title">本月 ({{ currentYM }}): ¥{{ sumTotal }}</view>
-    <van-button size="mini" bind:click="onSettings">⚙️</van-button>
+    <van-button size="mini" bind:click="onHeaderSettings">⚙️</van-button>
   </view>
   <view class="cards">
     <room-card

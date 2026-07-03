@@ -1,0 +1,12 @@
+.container { padding: 40rpx; }
+.row {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+.label { color: #888; font-size: 26rpx; }
+.code { font-size: 56rpx; font-weight: 600; letter-spacing: 8rpx; color: #06c; }
