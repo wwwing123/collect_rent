@@ -1,17 +1,19 @@
 # 收租小程序
 
-家庭自用的微信小程序，跟踪 7 间出租房（101、201、301、302、401、402、旧屋）
-的每月应收账单。基于微信云开发。
+家庭自用微信小程序，跟踪 7 个出租房（101、201、301、302、401、402、旧屋）按月应收账单。
 
-## 本地运行
+## 运行
 
-1. 在微信开发者工具打开本目录
-2. 在 `miniprogram/app.js` 把 `globalData.env` 改为云开发环境 ID
-3. 上传并部署 `cloudfunctions/rentApi`
-4. 编译运行
+1. 微信开发者工具打开本目录
+2. 修改 `miniprogram/app.js` 的 `globalData.env` 为云开发环境 ID
+3. 右键 `cloudfunctions/rentApi` → 上传并部署-云端安装依赖
+4. 工具 → 构建 npm
+5. 编译
 
-## 目录
+## 测试
 
-- `miniprogram/` — 小程序前端
-- `cloudfunctions/rentApi/` — 聚合云函数
-- `docs/superpowers/` — 设计文档与实施计划
+```bash
+npm test
+```
+
+运行 `computeBill` 单元测试（5 个用例）。
