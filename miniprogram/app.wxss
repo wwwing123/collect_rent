@@ -1,0 +1,13 @@
+page {
+  background: #f6f6f6;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+}
+button {
+  background: initial;
+}
+button:focus {
+  outline: 0;
+}
+button::after {
+  border: none;
+}
