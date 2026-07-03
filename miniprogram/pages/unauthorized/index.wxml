@@ -1,0 +1,13 @@
+<view class="wrap">
+  <view class="title">尚未加入家庭</view>
+  <view class="tip">向家庭管理员索取邀请码，输入下方以加入。</view>
+  <van-field
+    label="邀请码"
+    placeholder="6 位字母数字"
+    value="{{ code }}"
+    bind:input="onInput"
+    maxlength="{{ 6 }}"
+  />
+  <van-button type="primary" block bind:click="onSubmit">加入</van-button>
+  <view wx:if="{{ err }}" class="err">{{ err }}</view>
+</view>
