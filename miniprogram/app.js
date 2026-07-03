@@ -2,7 +2,7 @@ import { getOpenId, isAdmin } from './utils/auth.js';
 
 App({
   globalData: {
-    env: '',
+    env: 'cloudbase-d4g04uwx3e079f3ce',
     isAdmin: false,
     openid: null,
   },
