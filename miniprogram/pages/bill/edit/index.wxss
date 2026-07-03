@@ -1,0 +1,19 @@
+.container { padding: 30rpx 40rpx; display: flex; flex-direction: column; }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #eee;
+  margin-bottom: 30rpx;
+}
+.back, .next { font-size: 40rpx; padding: 0 20rpx; }
+.month { font-size: 32rpx; font-weight: 600; }
+.room-label { font-size: 36rpx; font-weight: 600; margin-bottom: 20rpx; }
+.ref { background: #f6f6f6; padding: 16rpx 20rpx; border-radius: 8rpx; font-size: 24rpx; color: #666; margin-bottom: 30rpx; }
+.ref.first { background: #fff7e6; }
+.form { margin-bottom: 30rpx; }
+.breakdown { background: #fafafa; padding: 20rpx; border-radius: 8rpx; margin-bottom: 30rpx; }
+.row { display: flex; justify-content: space-between; padding: 8rpx 0; font-size: 26rpx; }
+.row.total { border-top: 2rpx solid #333; margin-top: 8rpx; padding-top: 16rpx; font-size: 32rpx; font-weight: 600; }
+.row.total text:last-child { color: #e54545; }
