@@ -1,0 +1,10 @@
+.container { padding: 24rpx; }
+.banner {
+  background: #f6f6f6;
+  padding: 16rpx 20rpx;
+  font-size: 24rpx;
+  color: #888;
+  border-radius: 8rpx;
+  margin-bottom: 20rpx;
+}
+.footer { padding: 30rpx 0; }

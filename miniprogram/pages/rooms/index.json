@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "租金设置",
+  "usingComponents": {
+    "collapsible-room-form": "/components/collapsibleRoomForm/index",
+    "van-button": "@vant/weapp/button/index"
+  }
+}

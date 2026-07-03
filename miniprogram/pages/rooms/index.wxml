@@ -1,0 +1,12 @@
+<view class="container">
+  <view class="banner">此页设置影响未来账单的费率；改历史读数会自动重算后续账单</view>
+  <collapsible-room-form
+    rooms="{{ rooms }}"
+    active-names="{{ activeNames }}"
+    bind:collapsechange="onCollapse"
+    bind:fieldchange="onField"
+  />
+  <view class="footer">
+    <van-button type="primary" block bind:click="onSave">保存全部</van-button>
+  </view>
+</view>
