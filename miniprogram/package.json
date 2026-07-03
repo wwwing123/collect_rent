@@ -1,0 +1,9 @@
+{
+  "name": "collect-rent-miniprogram",
+  "version": "1.0.0",
+  "description": "收租小程序前端",
+  "dependencies": {
+    "@vant/weapp": "^1.11.7",
+    "ec-canvas": "^1.0.0"
+  }
+}
