@@ -45,30 +45,122 @@ async function seedRoomsIfEmpty() {
   }
 }
 
+function requireAuth(handler) {
+  return async (ctx) => {
+    if (!await isAuthorized(ctx.openid)) return { errCode: 'NOT_AUTHORIZED' };
+    return await handler(ctx);
+  };
+}
+
+const handlers = {
+  getOpenId: async ({ openid }) => {
+    const ok = await ensureFirstAdmin(openid);
+    return { openid, isAdmin: ok };
+  },
+  seedRooms: async () => {
+    await seedRoomsIfEmpty();
+    return { ok: true };
+  },
+  getRooms: requireAuth(async () => {
+    const { data } = await db.collection('rooms').orderBy('code', 'asc').get();
+    return { rooms: data };
+  }),
+  upsertRoom: requireAuth(async ({ openid, event }) => {
+    const r = event.room;
+    if (!r || !r.code) return { errCode: 'INVALID_INPUT' };
+    const { _id } = r;
+    delete r._id;
+    const data = {
+      ...r,
+      updated_at: new Date(),
+    };
+    if (_id) {
+      await db.collection('rooms').doc(_id).update({ data });
+    } else {
+      const { total } = await db.collection('rooms').where({ code: r.code }).count();
+      if (total > 0) return { errCode: 'ROOM_CODE_DUPLICATE' };
+      data._openid = openid;
+      data.created_at = new Date();
+      await db.collection('rooms').add({ data });
+    }
+    return { ok: true };
+  }),
+  getPrevBill: requireAuth(async ({ event }) => {
+    const { roomId, yearMonth } = event;
+    if (!roomId || !yearMonth) return { errCode: 'INVALID_INPUT' };
+    const { data } = await db.collection('bills').where({
+      room_id: roomId,
+      year_month: _.lt(yearMonth),
+    }).orderBy('year_month', 'desc').limit(1).get();
+    return { prev: data[0] || null };
+  }),
+  getBill: requireAuth(async ({ event }) => {
+    const { roomId, yearMonth } = event;
+    const { data } = await db.collection('bills').where({
+      room_id: roomId,
+      year_month: yearMonth,
+    }).limit(1).get();
+    return { bill: data[0] || null };
+  }),
+  upsertBill: requireAuth(async ({ openid, event }) => {
+    const { roomId, yearMonth, water_reading, elec_reading } = event;
+    if (!roomId || !yearMonth) return { errCode: 'INVALID_INPUT' };
+    if (typeof water_reading !== 'number' || typeof elec_reading !== 'number') {
+      return { errCode: 'INVALID_READING' };
+    }
+
+    const roomRes = await db.collection('rooms').doc(roomId).get();
+    const room = roomRes.data;
+    if (!room) return { errCode: 'ROOM_NOT_FOUND' };
+
+    const prevRes = await db.collection('bills').where({
+      room_id: roomId,
+      year_month: _.lt(yearMonth),
+    }).orderBy('year_month', 'desc').limit(1).get();
+    const prevBill = prevRes.data[0] || null;
+
+    const result = computeBill(room, prevBill, { water_reading, elec_reading });
+
+    const doc = {
+      room_id: roomId,
+      year_month: yearMonth,
+      water_reading,
+      elec_reading,
+      water_fee: result.water_fee,
+      elec_fee: result.elec_fee,
+      base_fee: result.base_fee,
+      total: result.total,
+      updated_at: new Date(),
+    };
+
+    const existingRes = await db.collection('bills').where({
+      room_id: roomId,
+      year_month: yearMonth,
+    }).limit(1).get();
+    const existing = existingRes.data[0];
+
+    if (existing) {
+      doc._openid = existing._openid;
+      await db.collection('bills').doc(existing._id).update({ data: doc });
+      return { ok: true, _id: existing._id };
+    } else {
+      doc._openid = openid;
+      doc.created_at = new Date();
+      const addRes = await db.collection('bills').add({ data: doc });
+      return { ok: true, _id: addRes._id };
+    }
+  }),
+};
+
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext();
-  const openid = wxContext.OPENID;
-  const t = event.type;
-
+  const ctx = { openid: wxContext.OPENID, event };
+  const handler = handlers[event.type];
+  if (!handler) return { errCode: 'UNKNOWN_TYPE', type: event.type };
   try {
-    switch (t) {
-      case 'getOpenId': {
-        const ok = await ensureFirstAdmin(openid);
-        return { openid, isAdmin: ok };
-      }
-      case 'seedRooms': {
-        await seedRoomsIfEmpty();
-        return { ok: true };
-      }
-      case 'getRooms': {
-        if (!await isAuthorized(openid)) return { errCode: 'NOT_AUTHORIZED' };
-        const { data } = await db.collection('rooms').orderBy('code', 'asc').get();
-        return { rooms: data };
-      }
-      default:
-        return { errCode: 'UNKNOWN_TYPE', type: t };
-    }
+    return await handler(ctx);
   } catch (e) {
+    console.error(e.stack);
     return { errCode: 'INTERNAL', message: e.message };
   }
 };
