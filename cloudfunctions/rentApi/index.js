@@ -45,6 +45,13 @@ async function seedRoomsIfEmpty() {
   }
 }
 
+function generateCode() {
+  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  let s = '';
+  for (let i = 0; i < 6; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
+
 function requireAuth(handler) {
   return async (ctx) => {
     if (!await isAuthorized(ctx.openid)) return { errCode: 'NOT_AUTHORIZED' };
@@ -189,6 +196,38 @@ const handlers = {
 
     return { fileID: upload.fileID };
   }),
+  getInviteCode: requireAuth(async () => {
+    const { data } = await db.collection('_config').doc('inviteCode').get();
+    if (data && data.code) return { code: data.code };
+    const code = generateCode();
+    await db.collection('_config').add({
+      data: { _id: 'inviteCode', code, created_at: new Date() },
+    });
+    return { code };
+  }),
+  regenerateInviteCode: requireAuth(async () => {
+    const code = generateCode();
+    try {
+      await db.collection('_config').doc('inviteCode').update({ data: { code } });
+    } catch (e) {
+      await db.collection('_config').add({
+        data: { _id: 'inviteCode', code, created_at: new Date() },
+      });
+    }
+    return { code };
+  }),
+  joinFamily: async ({ openid, event }) => {
+    const { code } = event;
+    if (!code) return { errCode: 'INVALID_INPUT' };
+    const { data } = await db.collection('_config').doc('inviteCode').get();
+    if (!data || data.code !== code) return { errCode: 'BAD_CODE' };
+    const dup = await db.collection('admins').where({ _id: openid }).count();
+    if (dup.total > 0) return { ok: true };
+    await db.collection('admins').add({
+      data: { _id: openid, name: '管理员', created_at: new Date() },
+    });
+    return { ok: true };
+  },
 };
 
 exports.main = async (event, context) => {
