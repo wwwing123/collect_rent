@@ -1,0 +1,4 @@
+.section { padding: 16rpx 0; }
+.section-title { font-size: 26rpx; color: #888; padding: 8rpx 16rpx; }
+.hint { font-size: 22rpx; color: #aaa; padding: 0 16rpx 12rpx; }
+.grid { display: flex; flex-direction: column; }

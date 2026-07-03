@@ -1,0 +1,31 @@
+<van-collapse value="{{ activeNames }}" bind:change="onChange">
+  <van-collapse-item
+    wx:for="{{ rooms }}"
+    wx:key="_id"
+    name="{{ item.code }}"
+    title="{{ item.code + (item.name ? ' · ' + item.name : '') }}"
+  >
+    <view class="section">
+      <view class="section-title">费率</view>
+      <view class="grid">
+        <van-field label="月租 (元)" type="digit" value="{{ item.rent }}" data-key="rent" data-code="{{ item.code }}" bind:change="onField" />
+        <van-field label="水单价 (元/吨)" type="digit" value="{{ item.water_unit_price }}" data-key="water_unit_price" data-code="{{ item.code }}" bind:change="onField" />
+        <van-field label="电电价 (元/度)" type="digit" value="{{ item.elec_unit_price }}" data-key="elec_unit_price" data-code="{{ item.code }}" bind:change="onField" />
+        <van-field label="垃圾费 (元)" type="digit" value="{{ item.garbage_fee }}" data-key="garbage_fee" data-code="{{ item.code }}" bind:change="onField" />
+        <van-field label="网络费 (元)" type="digit" value="{{ item.internet_fee }}" data-key="internet_fee" data-code="{{ item.code }}" bind:change="onField" />
+      </view>
+    </view>
+    <view class="section">
+      <view class="section-title">表基线</view>
+      <view class="hint">在没有账单之前的初始读数；不填默认为 0</view>
+      <view class="grid">
+        <van-field label="起始水表 (吨)" type="digit" value="{{ item.initial_water_reading }}" data-key="initial_water_reading" data-code="{{ item.code }}" bind:change="onField" />
+        <van-field label="起始电表 (度)" type="digit" value="{{ item.initial_elec_reading }}" data-key="initial_elec_reading" data-code="{{ item.code }}" bind:change="onField" />
+      </view>
+    </view>
+    <view class="section">
+      <view class="section-title">备注</view>
+      <van-field label="备注姓名" value="{{ item.name }}" data-key="name" data-code="{{ item.code }}" bind:change="onField" />
+    </view>
+  </van-collapse-item>
+</van-collapse>
