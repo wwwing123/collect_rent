@@ -1,1 +1,7 @@
-{ "navigationBarTitleText": "未授权" }
+{
+  "navigationBarTitleText": "未授权",
+  "usingComponents": {
+    "van-field": "@vant/weapp/field/index",
+    "van-button": "@vant/weapp/button/index"
+  }
+}
