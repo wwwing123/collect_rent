@@ -6,6 +6,7 @@ Page({
     roomId: '',
     roomLabel: '',
     history: [],
+    backfillYM: '',
     ec: { lazyLoad: true },
   },
 
@@ -25,14 +26,17 @@ Page({
     });
 
     const { bills } = await callRentApi('getHistory', { roomId, limit: 36, offset: 0 });
-    const history = bills.map(b => ({
-      year_month: b.year_month,
-      rent: room.rent,
-      water_fee: b.water_fee,
-      elec_fee: b.elec_fee,
-      other: (b.base_fee || 0) - room.rent,
-      total: b.total,
-    }));
+    const history = bills.map(b => {
+      const hasBreakdown = b.rent !== undefined;
+      return {
+        year_month: b.year_month,
+        rent: hasBreakdown ? b.rent : (b.base_fee || 0),
+        water_fee: b.water_fee,
+        elec_fee: b.elec_fee,
+        other: hasBreakdown ? (b.garbage_fee || 0) + (b.internet_fee || 0) : 0,
+        total: b.total,
+      };
+    });
     this.setData({ history });
     this.updateChart(bills);
   },
@@ -54,16 +58,26 @@ Page({
   _renderChart(bills) {
     const sorted = [...bills].sort((a, b) => a.year_month < b.year_month ? -1 : 1);
     const months = sorted.map(b => b.year_month);
-    const water = sorted.map(b => b.water_reading ?? 0);
-    const elec  = sorted.map(b => b.elec_reading ?? 0);
+    const water = sorted.map((b, i) => {
+      if (i === 0) return 0;
+      return Math.max(0, (b.water_reading ?? 0) - (sorted[i - 1].water_reading ?? 0));
+    });
+    const elec = sorted.map((b, i) => {
+      if (i === 0) return 0;
+      return Math.max(0, (b.elec_reading ?? 0) - (sorted[i - 1].elec_reading ?? 0));
+    });
     this.chart.setOption({
-      grid: { left: 40, right: 20, top: 30, bottom: 30 },
+      grid: { left: 50, right: 50, top: 40, bottom: 30 },
       legend: { top: 0 },
+      tooltip: { trigger: 'axis' },
       xAxis: { type: 'category', data: months },
-      yAxis: { type: 'value' },
+      yAxis: [
+        { type: 'value', name: '水(吨)', position: 'left', axisLine: { lineStyle: { color: '#3a8ee6' } } },
+        { type: 'value', name: '电(度)', position: 'right', axisLine: { lineStyle: { color: '#f59e0b' } } },
+      ],
       series: [
-        { name: '水(吨)', type: 'line', data: water, smooth: true, itemStyle: { color: '#3a8ee6' } },
-        { name: '电(度)', type: 'line', data: elec,  smooth: true, itemStyle: { color: '#f59e0b' } },
+        { name: '水(吨)', type: 'line', data: water, smooth: true, yAxisIndex: 0, itemStyle: { color: '#3a8ee6' } },
+        { name: '电(度)', type: 'line', data: elec,  smooth: true, yAxisIndex: 1, itemStyle: { color: '#f59e0b' } },
       ],
     });
   },
@@ -71,6 +85,11 @@ Page({
   onTapRow(e) {
     const { yearmonth } = e.currentTarget.dataset;
     wx.navigateTo({ url: `/pages/bill/edit/index?roomId=${this.data.roomId}&yearMonth=${yearmonth}` });
+  },
+
+  onPickMonth(e) {
+    const ym = e.detail.value;
+    wx.redirectTo({ url: `/pages/bill/edit/index?roomId=${this.data.roomId}&yearMonth=${ym}` });
   },
 
   async onExport() {

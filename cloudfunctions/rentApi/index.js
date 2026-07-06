@@ -5,13 +5,13 @@ const _ = db.command;
 const { computeBill } = require('./billing');
 
 const SEED_ROOMS = [
-  { code: '101',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, initial_water_reading: 0, initial_elec_reading: 0, status: 'active' },
-  { code: '201',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, initial_water_reading: 0, initial_elec_reading: 0, status: 'active' },
-  { code: '301',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, initial_water_reading: 0, initial_elec_reading: 0, status: 'active' },
-  { code: '302',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, initial_water_reading: 0, initial_elec_reading: 0, status: 'active' },
-  { code: '401',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, initial_water_reading: 0, initial_elec_reading: 0, status: 'active' },
-  { code: '402',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, initial_water_reading: 0, initial_elec_reading: 0, status: 'active' },
-  { code: '旧屋',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, initial_water_reading: 0, initial_elec_reading: 0, status: 'active' },
+  { code: '101',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, status: 'active' },
+  { code: '201',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, status: 'active' },
+  { code: '301',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, status: 'active' },
+  { code: '302',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, status: 'active' },
+  { code: '401',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, status: 'active' },
+  { code: '402',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, status: 'active' },
+  { code: '旧屋',  name: '朗枝岗170号', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, status: 'active' },
 ];
 
 async function isAuthorized(openid) {
@@ -45,6 +45,29 @@ async function seedRoomsIfEmpty() {
   }
 }
 
+async function ensureCollection(name) {
+  try {
+    await db.createCollection(name);
+  } catch (e) {
+    console.warn(`createCollection(${name}) failed:`, e.message);
+  }
+}
+
+async function setInviteCode() {
+  await ensureCollection('app_config');
+  const code = generateCode();
+  try {
+    await db.collection('app_config').doc('inviteCode').set({
+      data: { code, created_at: new Date() },
+    });
+  } catch (e) {
+    await db.collection('app_config').add({
+      data: { _id: 'inviteCode', code, created_at: new Date() },
+    });
+  }
+  return code;
+}
+
 function generateCode() {
   const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
   let s = '';
@@ -57,6 +80,29 @@ function requireAuth(handler) {
     if (!await isAuthorized(ctx.openid)) return { errCode: 'NOT_AUTHORIZED' };
     return await handler(ctx);
   };
+}
+
+async function nextReceiptNo() {
+  await ensureCollection('counters');
+  const updateRes = await db.collection('counters').doc('receipt_no').update({
+    data: { value: _.inc(1), updated_at: new Date() },
+  });
+  if (updateRes.stats.updated > 0) {
+    const res = await db.collection('counters').doc('receipt_no').get();
+    return res.data.value;
+  }
+  try {
+    await db.collection('counters').add({
+      data: { _id: 'receipt_no', value: 1, created_at: new Date(), updated_at: new Date() },
+    });
+    return 1;
+  } catch (e) {
+    const retryRes = await db.collection('counters').doc('receipt_no').update({
+      data: { value: _.inc(1), updated_at: new Date() },
+    });
+    const res = await db.collection('counters').doc('receipt_no').get();
+    return res.data.value;
+  }
 }
 
 const handlers = {
@@ -136,6 +182,9 @@ const handlers = {
       water_fee: result.water_fee,
       elec_fee: result.elec_fee,
       base_fee: result.base_fee,
+      rent: room.rent,
+      garbage_fee: room.garbage_fee,
+      internet_fee: room.internet_fee,
       total: result.total,
       updated_at: new Date(),
     };
@@ -197,29 +246,21 @@ const handlers = {
     return { fileID: upload.fileID };
   }),
   getInviteCode: requireAuth(async () => {
-    const { data } = await db.collection('_config').doc('inviteCode').get();
-    if (data && data.code) return { code: data.code };
-    const code = generateCode();
-    await db.collection('_config').add({
-      data: { _id: 'inviteCode', code, created_at: new Date() },
-    });
-    return { code };
+    return { code: await setInviteCode() };
   }),
   regenerateInviteCode: requireAuth(async () => {
-    const code = generateCode();
-    try {
-      await db.collection('_config').doc('inviteCode').update({ data: { code } });
-    } catch (e) {
-      await db.collection('_config').add({
-        data: { _id: 'inviteCode', code, created_at: new Date() },
-      });
-    }
-    return { code };
+    return { code: await setInviteCode() };
+  }),
+  nextReceiptNo: requireAuth(async () => {
+    const value = await nextReceiptNo();
+    const no = String(value).padStart(6, '0');
+    return { receiptNo: no };
   }),
   joinFamily: async ({ openid, event }) => {
     const { code } = event;
     if (!code) return { errCode: 'INVALID_INPUT' };
-    const { data } = await db.collection('_config').doc('inviteCode').get();
+    await ensureCollection('app_config');
+    const { data } = await db.collection('app_config').doc('inviteCode').get();
     if (!data || data.code !== code) return { errCode: 'BAD_CODE' };
     const dup = await db.collection('admins').where({ _id: openid }).count();
     if (dup.total > 0) return { ok: true };

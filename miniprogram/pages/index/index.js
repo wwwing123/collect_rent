@@ -1,4 +1,5 @@
 import { callRentApi } from '../../utils/api.js';
+import { isAdmin } from '../../utils/auth.js';
 import { currentYearMonth, formatYearMonthLabel } from '../../utils/format.js';
 
 const app = getApp();
@@ -11,7 +12,9 @@ Page({
   },
 
   async onShow() {
-    if (!app.globalData.isAdmin) {
+    const admin = app.globalData.isAdmin || await isAdmin();
+    app.globalData.isAdmin = admin;
+    if (!admin) {
       wx.reLaunch({ url: '/pages/unauthorized/index' });
       return;
     }
@@ -50,7 +53,7 @@ Page({
     });
     this.setData({ rooms, currentYM: ym, sumTotal: sum.toFixed(2) });
   },
-
+  
   onHeaderSettings() {
     wx.navigateTo({ url: '/pages/settings/index' });
   },
@@ -78,5 +81,18 @@ Page({
   onHistory(e) {
     const roomId = e.detail.roomId;
     wx.navigateTo({ url: `/pages/bill/history/index?roomId=${roomId}` });
+  },
+
+  async onReceipt(e) {
+    const roomId = e.detail.roomId;
+    wx.showLoading({ title: '生成中...' });
+    try {
+      const { receiptNo } = await callRentApi('nextReceiptNo');
+      wx.hideLoading();
+      wx.navigateTo({ url: `/pages/receipt/preview/index?roomId=${roomId}&receiptNo=${receiptNo}` });
+    } catch (err) {
+      wx.hideLoading();
+      wx.showToast({ title: '生成失败', icon: 'none' });
+    }
   },
 });

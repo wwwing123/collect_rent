@@ -30,7 +30,15 @@ Page({
     wx.showLoading({ title: '保存中...' });
     try {
       for (const room of this.data.rooms) {
-        await callRentApi('upsertRoom', { room });
+        const cleaned = {
+          ...room,
+          rent: Number(room.rent) || 0,
+          water_unit_price: Number(room.water_unit_price) || 0,
+          elec_unit_price: Number(room.elec_unit_price) || 0,
+          garbage_fee: Number(room.garbage_fee) || 0,
+          internet_fee: Number(room.internet_fee) || 0,
+        };
+        await callRentApi('upsertRoom', { room: cleaned });
       }
       wx.hideLoading();
       wx.showToast({ title: '已保存', icon: 'success' });

@@ -1,6 +1,13 @@
 <view class="container">
   <view class="room-label">{{ roomLabel }}</view>
 
+  <view class="backfill">
+    <picker mode="date" fields="month" value="{{ backfillYM }}" start="2018-01" end="2099-12" bindchange="onPickMonth">
+      <van-button type="default" block>补录历史读数</van-button>
+    </picker>
+    <view class="backfill-hint">选择月份后跳转录入页。补录中间月份后再保存后续月份，会自动用最新的上月读数重算。</view>
+  </view>
+
   <view class="table">
     <view class="tr th">
       <text class="td">月份</text>

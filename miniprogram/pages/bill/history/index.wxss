@@ -1,5 +1,7 @@
 .container { padding: 24rpx; }
 .room-label { font-size: 30rpx; font-weight: 600; margin-bottom: 16rpx; }
+.backfill { background: #fff; padding: 20rpx; border-radius: 8rpx; margin-bottom: 20rpx; }
+.backfill-hint { font-size: 22rpx; color: #999; margin-top: 10rpx; line-height: 1.5; }
 .table { border: 1rpx solid #eee; border-radius: 8rpx; overflow: hidden; background: #fff; margin-bottom: 30rpx; }
 .tr { display: flex; padding: 16rpx 12rpx; border-bottom: 1rpx solid #f0f0f0; font-size: 24rpx; }
 .tr.th { background: #f6f6f6; font-weight: 600; }

@@ -3,11 +3,9 @@ function round2(n) {
 }
 
 export function computeBill(room, prevBill, current) {
-  const prevWater = prevBill ? prevBill.water_reading : (room.initial_water_reading ?? 0);
-  const prevElec  = prevBill ? prevBill.elec_reading  : (room.initial_elec_reading  ?? 0);
   const baseFee = room.rent + room.garbage_fee + room.internet_fee;
-  const waterUsage = Math.max(0, current.water_reading - prevWater);
-  const elecUsage  = Math.max(0, current.elec_reading  - prevElec);
+  const waterUsage = prevBill ? Math.max(0, current.water_reading - prevBill.water_reading) : 0;
+  const elecUsage  = prevBill ? Math.max(0, current.elec_reading  - prevBill.elec_reading)  : 0;
   const waterFee = round2(waterUsage * room.water_unit_price);
   const elecFee  = round2(elecUsage  * room.elec_unit_price);
   return {

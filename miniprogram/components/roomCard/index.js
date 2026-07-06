@@ -10,5 +10,9 @@ Component({
     onSettings()   { this.triggerEvent('settings',   { roomId: this.data.room._id }); },
     onGenerate()   { this.triggerEvent('generate',   { roomId: this.data.room._id }); },
     onHistory()    { this.triggerEvent('history',    { roomId: this.data.room._id }); },
+    onReceipt()    {
+      if (!this.data.hasBill) return;
+      this.triggerEvent('receipt', { roomId: this.data.room._id });
+    },
   },
 });

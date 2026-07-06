@@ -12,8 +12,6 @@ Page({
     elecReading: '',
     prevWater: null,
     prevElec: null,
-    initialWater: 0,
-    initialElec: 0,
     breakdown: { water_fee: 0, elec_fee: 0, base_fee: 0, total: 0, water_usage: 0, elec_usage: 0, garbage_fee: 0, internet_fee: 0 },
   },
 
@@ -34,8 +32,6 @@ Page({
       elecReading: bill?.elec_reading ?? '',
       prevWater: prev?.water_reading ?? null,
       prevElec: prev?.elec_reading ?? null,
-      initialWater: room.initial_water_reading ?? 0,
-      initialElec: room.initial_elec_reading ?? 0,
     });
 
     if (this.data.waterReading !== '' || this.data.elecReading !== '') {
@@ -49,7 +45,7 @@ Page({
   },
 
   recalc() {
-    const { room, prevWater, prevElec, initialWater, initialElec, waterReading, elecReading } = this.data;
+    const { room, prevWater, prevElec, waterReading, elecReading } = this.data;
     if (waterReading === '' || elecReading === '') {
       this.setData({
         breakdown: { water_fee: 0, elec_fee: 0, base_fee: room.rent + room.garbage_fee + room.internet_fee, total: room.rent + room.garbage_fee + room.internet_fee, water_usage: 0, elec_usage: 0, garbage_fee: room.garbage_fee, internet_fee: room.internet_fee },
@@ -60,13 +56,13 @@ Page({
     const w = Number(waterReading);
     const e = Number(elecReading);
     const result = computeBill(room, prev, { water_reading: w, elec_reading: e });
-    const waterUsage = prev ? Math.max(0, w - prevWater) : w - (initialWater || 0);
-    const elecUsage  = prev ? Math.max(0, e - prevElec)  : e - (initialElec  || 0);
+    const waterUsage = prev ? Math.max(0, w - prevWater) : 0;
+    const elecUsage  = prev ? Math.max(0, e - prevElec)  : 0;
     this.setData({
       breakdown: {
         ...result,
-        water_usage: Math.max(0, waterUsage).toFixed(2),
-        elec_usage: Math.max(0, elecUsage).toFixed(2),
+        water_usage: waterUsage.toFixed(2),
+        elec_usage: elecUsage.toFixed(2),
         garbage_fee: room.garbage_fee,
         internet_fee: room.internet_fee,
       },

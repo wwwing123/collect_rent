@@ -1,14 +1,32 @@
 <view class="card">
   <view class="head">
-    <view class="title">{{ room.code }}<text wx:if="{{ room.name }}" class="name"> · {{ room.name }}</text></view>
+    <view class="title">
+      {{ room.code }}<text wx:if="{{ room.name }}" class="name"> · {{ room.name }}</text>
+      <view class="settings-btn" bindtap="onSettings">⚙️</view>
+    </view>
     <view class="amount">
       <text wx:if="{{ hasBill }}">{{ billLabel }} 应缴 <text class="num">¥{{ billTotal }}</text></text>
       <text wx:else class="empty">{{ billLabel }} 未生成</text>
     </view>
   </view>
   <view class="actions">
-    <van-button size="small" bind:click="onSettings">⚙️ 租金设置</van-button>
-    <van-button size="small" type="primary" bind:click="onGenerate" disabled="{{ !isActive }}">📝 生成账单</van-button>
-    <van-button size="small" bind:click="onHistory">📊 历史账单</van-button>
+    <view class="action-btn primary {{ !isActive ? 'disabled' : '' }}" bindtap="onGenerate">
+      <view class="btn-inner">
+        <view class="btn-icon">📝</view>
+        <view class="btn-label">录入</view>
+      </view>
+    </view>
+    <view class="action-btn" bindtap="onHistory">
+      <view class="btn-inner">
+        <view class="btn-icon">📊</view>
+        <view class="btn-label">历史</view>
+      </view>
+    </view>
+    <view class="action-btn {{ !hasBill ? 'disabled' : '' }}" bindtap="onReceipt">
+      <view class="btn-inner">
+        <view class="btn-icon">🧾</view>
+        <view class="btn-label">收据</view>
+      </view>
+    </view>
   </view>
 </view>

@@ -4,6 +4,7 @@
     "pages/rooms/index",
     "pages/bill/edit/index",
     "pages/bill/history/index",
+    "pages/receipt/preview/index",
     "pages/unauthorized/index",
     "pages/settings/index"
   ],

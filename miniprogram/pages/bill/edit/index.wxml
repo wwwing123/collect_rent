@@ -6,7 +6,7 @@
   </view>
   <view class="room-label">{{ room.code }}{{ room.name ? ' · ' + room.name : '' }}</view>
   <view class="ref" wx:if="{{ prevWater !== null }}">上月水表：{{ prevWater }} 吨 · 上月电表：{{ prevElec }} 度</view>
-  <view class="ref first" wx:elif="{{ !prevWater && prevWater !== null }}">无上月读数，本次度数将作为基线（参考：起始水 {{ initialWater }} 吨 / 起始电 {{ initialElec }} 度）</view>
+  <view class="ref first" wx:else>无上月读数，本次只收基础费用（房租+垃圾+网络）</view>
 
   <view class="form">
     <van-field label="水表 (吨)" type="digit" value="{{ waterReading }}" data-key="waterReading" bind:change="onReading" />
