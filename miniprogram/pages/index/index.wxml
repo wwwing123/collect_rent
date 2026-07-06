@@ -15,6 +15,7 @@
       bind:settings="onSettings"
       bind:generate="onGenerate"
       bind:history="onHistory"
+      bind:receipt="onReceipt"
     />
   </view>
 </view>

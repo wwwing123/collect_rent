@@ -1,5 +1,8 @@
 {
   "navigationBarTitleText": "收据",
   "navigationBarBackgroundColor": "#f6f6f6",
-  "navigationBarTextStyle": "black"
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+    "van-button": "@vant/weapp/button/index"
+  }
 }
