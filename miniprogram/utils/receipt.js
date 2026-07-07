@@ -237,17 +237,35 @@ function drawCell(ctx, text, colStart, span, align, bold) {
 }
 
 function drawTableBody(ctx, rows) {
-  for (let r = 0; r < rows.length; r++) {
-    const row = rows[r];
-    const y = HEADER_Y + ROW_H * (r + 1) + ROW_H / 2;
-    ctx.textAlign = 'left';
-    ctx.fillText(row.label, COL_X[0] + 10, y);
-    ctx.textAlign = 'center';
-    ctx.fillText(row.prev, (COL_X[1] + COL_X[2]) / 2, y);
-    ctx.fillText(row.curr, (COL_X[2] + COL_X[3]) / 2, y);
-    ctx.fillText(row.unit, (COL_X[3] + COL_X[4]) / 2, y);
-    ctx.textAlign = 'right';
-    ctx.fillText(row.amount, COL_X[5] - 10, y);
+  const today = new Date();
+  const monthLabel = `${today.getFullYear()}年${today.getMonth() + 1}月份房租`;
+
+  for (let r = 0; r < ROW_COUNT; r++) {
+    currentRow = r;
+    if (r < 3) {
+      const row = rows[r];
+      if (r === 2) {
+        drawCell(ctx, row.label, 0, 1, 'left', false);
+        drawCell(ctx, monthLabel, 1, 4, 'center', false);
+        drawCell(ctx, row.amount, 5, 1, 'right', false);
+      } else {
+        drawCell(ctx, row.label, 0, 1, 'left', false);
+        drawCell(ctx, row.prev, 1, 1, 'center', false);
+        drawCell(ctx, row.curr, 2, 1, 'center', false);
+        drawCell(ctx, row.usage, 3, 1, 'center', false);
+        drawCell(ctx, row.unit, 4, 1, 'center', false);
+        drawCell(ctx, row.amount, 5, 1, 'right', false);
+      }
+    } else {
+      const garbage = rows[3];
+      const internet = rows[4];
+      drawCell(ctx, garbage.label, 0, 1, 'left', false);
+      drawCell(ctx, garbage.amount, 1, 1, 'right', false);
+      drawCell(ctx, internet.label, 3, 1, 'left', false);
+      drawCell(ctx, internet.amount, 4, 1, 'right', false);
+      const subtotal = (Number(garbage.amount) + Number(internet.amount)).toFixed(2);
+      drawCell(ctx, subtotal, 5, 1, 'right', false);
+    }
   }
 }
 
