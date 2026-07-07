@@ -5,6 +5,7 @@ import {
   formatReceiptNo,
   formatReceiptDate,
   formatAmount,
+  formatCNY,
   buildReceiptData,
 } from './receipt.js';
 
@@ -35,7 +36,7 @@ test('formatReceiptNo: 补零到 6 位', () => {
 });
 
 test('formatReceiptDate: 中文格式 YYYY年M月D日', () => {
-  const d = new Date(2026, 5, 30); // 2026-06-30
+  const d = new Date(2026, 5, 30);
   assert.equal(formatReceiptDate(d), '2026年6月30日');
 });
 
@@ -48,9 +49,40 @@ test('formatAmount: 保留 2 位小数', () => {
   assert.equal(formatAmount(null), '0.00');
 });
 
-test('buildReceiptData: 完整账单', () => {
-  const room = { code: '101', name: 'A栋403房' };
+test('formatCNY: 整数', () => {
+  assert.equal(formatCNY(0), '零圆整');
+  assert.equal(formatCNY(1), '壹圆整');
+  assert.equal(formatCNY(10), '壹拾圆整');
+  assert.equal(formatCNY(100), '壹佰圆整');
+  assert.equal(formatCNY(1000), '壹仟圆整');
+  assert.equal(formatCNY(1400), '壹仟肆佰圆整');
+});
+
+test('formatCNY: 4 位数含零', () => {
+  assert.equal(formatCNY(2037), '贰仟零叁拾柒圆整');
+  assert.equal(formatCNY(1001), '壹仟零壹圆整');
+  assert.equal(formatCNY(1010), '壹仟零壹拾圆整');
+  assert.equal(formatCNY(1100), '壹仟壹佰圆整');
+});
+
+test('formatCNY: 小数（图片原样式）', () => {
+  assert.equal(formatCNY(2037.5), '贰仟零叁拾柒.伍圆整');
+  assert.equal(formatCNY(100.05), '壹佰.零伍圆整');
+  assert.equal(formatCNY(0.5), '零.伍圆整');
+  assert.equal(formatCNY(99.99), '玖拾玖.玖玖圆整');
+});
+
+test('formatCNY: 边界值', () => {
+  assert.equal(formatCNY(null), '零圆整');
+  assert.equal(formatCNY(undefined), '零圆整');
+  assert.equal(formatCNY(NaN), '零圆整');
+});
+
+test('buildReceiptData: 完整账单（含上期）', () => {
+  const room = { code: '101', name: 'A栋403房', water_unit_price: 6, elec_unit_price: 0.89 };
   const bill = {
+    water_reading: 676,
+    elec_reading: 11979,
     water_fee: 108,
     elec_fee: 314.17,
     rent: 1400,
@@ -58,23 +90,62 @@ test('buildReceiptData: 完整账单', () => {
     internet_fee: 0,
     total: 1837.17,
   };
-  const data = buildReceiptData({ room, bill, receiptNo: 1, today: new Date(2026, 5, 30) });
+  const prevBill = { water_reading: 659, elec_reading: 11627 };
+  const data = buildReceiptData({ room, bill, prevBill, receiptNo: 1, today: new Date(2026, 5, 30) });
   assert.equal(data.userName, '南东新村6巷92号 A栋403房');
   assert.equal(data.receiptNo, '000001');
   assert.equal(data.date, '2026年6月30日');
-  assert.equal(data.items.length, 5);
-  assert.equal(data.items[0].label, '水费(元)');
-  assert.equal(data.items[0].amount, '108.00');
-  assert.equal(data.items[1].amount, '314.17');
-  assert.equal(data.items[2].amount, '1400.00');
-  assert.equal(data.items[3].amount, '15.00');
-  assert.equal(data.items[4].amount, '0.00');
+  assert.equal(data.rows.length, 5);
+
+  const water = data.rows[0];
+  assert.equal(water.label, '水费(吨)');
+  assert.equal(water.prev, '659');
+  assert.equal(water.curr, '676');
+  assert.equal(water.unit, '6.00');
+  assert.equal(water.amount, '108.00');
+  assert.equal(water.usage, '17');
+
+  const elec = data.rows[1];
+  assert.equal(elec.label, '电费(度)');
+  assert.equal(elec.prev, '11627');
+  assert.equal(elec.curr, '11979');
+  assert.equal(elec.unit, '0.89');
+  assert.equal(elec.amount, '314.17');
+  assert.equal(elec.usage, '352');
+
+  const rent = data.rows[2];
+  assert.equal(rent.label, '租金(元)');
+  assert.equal(rent.prev, '');
+  assert.equal(rent.amount, '1400.00');
+
   assert.equal(data.total, '1837.17');
+  assert.equal(data.totalCN, '壹仟捌佰叁拾柒.壹柒圆整');
+});
+
+test('buildReceiptData: 首月（无上期）', () => {
+  const room = { code: '101', name: 'X', water_unit_price: 3, elec_unit_price: 0.6 };
+  const bill = {
+    water_reading: 100,
+    elec_reading: 2000,
+    water_fee: 0,
+    elec_fee: 0,
+    rent: 500,
+    garbage_fee: 10,
+    internet_fee: 50,
+    total: 560,
+  };
+  const data = buildReceiptData({ room, bill, prevBill: null, receiptNo: 5, today: new Date(2026, 0, 1) });
+  assert.equal(data.rows[0].prev, '');
+  assert.equal(data.rows[0].curr, '100');
+  assert.equal(data.rows[0].unit, '3.00');
+  assert.equal(data.total, '560.00');
+  assert.equal(data.totalCN, '伍佰陆拾圆整');
 });
 
 test('buildReceiptData: 账单字段缺失时安全降级', () => {
-  const data = buildReceiptData({ room: { code: '101', name: 'X' }, bill: null, receiptNo: 5, today: new Date(2026, 0, 1) });
+  const data = buildReceiptData({ room: null, bill: null, prevBill: null, receiptNo: 5, today: new Date(2026, 0, 1) });
   assert.equal(data.receiptNo, '000005');
-  assert.equal(data.items.every(i => i.amount === '0.00'), true);
+  assert.equal(data.rows.every(r => r.amount === '0.00' && r.prev === '' && r.curr === '' && r.unit === ''), true);
   assert.equal(data.total, '0.00');
+  assert.equal(data.totalCN, '零圆整');
 });
