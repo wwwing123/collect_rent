@@ -304,7 +304,7 @@ function drawSignature(ctx) {
 function drawVerticalText(ctx) {
   ctx.save();
   ctx.fillStyle = INK;
-  ctx.font = '20px sans-serif';
+  ctx.font = `20px ${FONT}`;
   ctx.textBaseline = 'middle';
 
   const cx = W - 25;
