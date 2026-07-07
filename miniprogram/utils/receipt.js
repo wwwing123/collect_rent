@@ -204,12 +204,16 @@ function drawTableGrid(ctx) {
 }
 
 function drawTableHeader(ctx) {
-  const headers = ['项 目', '上 月', '本 月', '单 价', '金额小计(元)', '备 注'];
+  ctx.fillStyle = INK;
+  ctx.font = `bold 22px ${FONT}`;
+  ctx.textBaseline = 'middle';
+
   const cy = HEADER_Y + ROW_H / 2;
-  headers.forEach((text, i) => {
+  TABLE_HEADERS.forEach((text, i) => {
     let x, align;
-    if (i === 0 || i === 5) { x = COL_X[i] + 10; align = 'left'; }
-    else if (i === 4) { x = COL_X[i + 1] - 10; align = 'right'; }
+    if (i === 0) { x = COL_X[i] + 10; align = 'left'; }
+    else if (i === 5) { x = COL_X[i] + COL_WIDTHS[i] - 10; align = 'right'; }
+    else if (i === 6) { x = COL_X[i] + 10; align = 'left'; }
     else { x = (COL_X[i] + COL_X[i + 1]) / 2; align = 'center'; }
     ctx.textAlign = align;
     ctx.fillText(text, x, cy);
