@@ -270,12 +270,13 @@ function drawTableBody(ctx, rows) {
 }
 
 function drawTableTotal(ctx, total, totalCN) {
-  const y = HEADER_Y + ROW_H * (RECEIPT_ROWS.length + 1) + ROW_H / 2;
-  ctx.textAlign = 'left';
-  ctx.fillText(`合计人民币（大写）: ${totalCN}`, COL_X[0] + 10, y);
+  currentRow = ROW_COUNT;
+  drawCell(ctx, `合计人民币（大写）: ${totalCN}`, 0, 5, 'left', false);
+  ctx.font = `bold 24px ${FONT}`;
+  ctx.fillStyle = INK;
   ctx.textAlign = 'right';
-  ctx.font = 'bold 24px sans-serif';
-  ctx.fillText(`¥${total}`, COL_X[5] - 10, y);
+  const right = COL_X[6];
+  ctx.fillText(`¥${total}`, right - 10, HEADER_Y + ROW_H * (currentRow + 1) + ROW_H / 2);
 }
 
 function drawSignature(ctx) {
