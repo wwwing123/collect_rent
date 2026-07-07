@@ -109,6 +109,8 @@ const RECEIPT_ROWS = [
   { key: 'internet_fee', label: '网络费(元)', hasUsage: false },
 ];
 
+let currentRow = 0;
+
 export function drawReceipt(ctx, data) {
   drawBackground(ctx);
   drawHeader(ctx, data);
@@ -218,6 +220,20 @@ function drawTableHeader(ctx) {
     ctx.textAlign = align;
     ctx.fillText(text, x, cy);
   });
+}
+
+function drawCell(ctx, text, colStart, span, align, bold) {
+  const left = COL_X[colStart];
+  const right = colStart + span < COL_X.length ? COL_X[colStart + span] : COL_X[COL_X.length - 1] + COL_WIDTHS[COL_WIDTHS.length - 1];
+  const width = right - left;
+  let x;
+  if (align === 'left') x = left + 10;
+  else if (align === 'right') x = right - 10;
+  else x = left + width / 2;
+  ctx.font = `${bold ? 'bold ' : ''}22px ${FONT}`;
+  ctx.fillStyle = INK;
+  ctx.textAlign = align;
+  ctx.fillText(text || '', x, HEADER_Y + ROW_H * (currentRow + 1) + ROW_H / 2);
 }
 
 function drawTableBody(ctx, rows) {
