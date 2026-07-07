@@ -2,8 +2,8 @@ import { callRentApi } from '../../../utils/api.js';
 import { currentYearMonth } from '../../../utils/format.js';
 import { buildReceiptData, drawReceipt } from '../../../utils/receipt.js';
 
-const RECEIPT_W = 750;
-const RECEIPT_H = 500;
+const RECEIPT_W = 900;
+const RECEIPT_H = 560;
 
 Page({
   data: {
@@ -19,7 +19,10 @@ Page({
       const room = roomsRes.rooms.find(r => r._id === roomId);
       if (!room) throw new Error('房间不存在');
       const ym = currentYearMonth();
-      const { bill } = await callRentApi('getBill', { roomId, yearMonth: ym });
+      const [{ bill }, { prev }] = await Promise.all([
+        callRentApi('getBill', { roomId, yearMonth: ym }),
+        callRentApi('getPrevBill', { roomId, yearMonth: ym }),
+      ]);
       if (!bill) {
         wx.showToast({ title: '当月无账单', icon: 'none' });
         setTimeout(() => wx.navigateBack(), 800);
@@ -27,6 +30,7 @@ Page({
       }
       this._room = room;
       this._bill = bill;
+      this._prevBill = prev || null;
       this._receiptNo = receiptNo;
       this._today = new Date();
       this.setData({ loading: false });
@@ -42,6 +46,7 @@ Page({
     const data = buildReceiptData({
       room: this._room,
       bill: this._bill,
+      prevBill: this._prevBill,
       receiptNo: this._receiptNo,
       today: this._today,
     });
