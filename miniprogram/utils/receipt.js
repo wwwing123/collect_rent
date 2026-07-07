@@ -170,23 +170,36 @@ function drawTable(ctx, { rows, total, totalCN }) {
 }
 
 function drawTableGrid(ctx) {
+  const left = PADDING;
+  const right = PADDING + COL_WIDTHS.reduce((a, b) => a + b, 0);
   ctx.lineWidth = 1;
+  ctx.strokeStyle = INK;
   ctx.beginPath();
+  // 7 列的纵向分隔线
   for (let i = 0; i < COL_X.length; i++) {
     ctx.moveTo(COL_X[i], HEADER_Y);
     ctx.lineTo(COL_X[i], TABLE_BOTTOM);
   }
-  ctx.moveTo(PADDING, HEADER_Y);
-  ctx.lineTo(W - PADDING, HEADER_Y);
-  ctx.moveTo(PADDING, HEADER_Y + ROW_H);
-  ctx.lineTo(W - PADDING, HEADER_Y + ROW_H);
-  for (let r = 1; r <= RECEIPT_ROWS.length; r++) {
+  // 右侧边框
+  ctx.moveTo(right, HEADER_Y);
+  ctx.lineTo(right, TABLE_BOTTOM);
+  // 拆分行（row index 3）的中间竖线：col 3 左边界
+  const splitRowY = HEADER_Y + ROW_H * 3;
+  const splitRowBottom = HEADER_Y + ROW_H * 4;
+  ctx.moveTo(COL_X[3], splitRowY);
+  ctx.lineTo(COL_X[3], splitRowBottom);
+  // 表头下边线
+  ctx.moveTo(left, HEADER_Y + ROW_H);
+  ctx.lineTo(right, HEADER_Y + ROW_H);
+  // 每个数据行下边线
+  for (let r = 1; r <= ROW_COUNT; r++) {
     const y = HEADER_Y + ROW_H * r;
-    ctx.moveTo(PADDING, y);
-    ctx.lineTo(W - PADDING, y);
+    ctx.moveTo(left, y);
+    ctx.lineTo(right, y);
   }
-  ctx.moveTo(PADDING, TABLE_BOTTOM);
-  ctx.lineTo(W - PADDING, TABLE_BOTTOM);
+  // 合计行下边线
+  ctx.moveTo(left, TABLE_BOTTOM);
+  ctx.lineTo(right, TABLE_BOTTOM);
   ctx.stroke();
 }
 
