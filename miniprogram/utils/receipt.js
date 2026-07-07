@@ -2,15 +2,6 @@ const PROPERTY_ADDRESS = '南东新村6巷92号';
 
 const DIGITS = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
 const UNITS = ['', '拾', '佰', '仟'];
-
-const RECEIPT_ROWS = [
-  { key: 'water_fee',    label: '水费(吨)',  hasUsage: true  },
-  { key: 'elec_fee',     label: '电费(度)',  hasUsage: true  },
-  { key: 'rent',         label: '租金(元)',  hasUsage: false },
-  { key: 'garbage_fee',  label: '垃圾费(元)', hasUsage: false },
-  { key: 'internet_fee', label: '网络费(元)', hasUsage: false },
-];
-
 export function getReceiptUserName(room) {
   if (!room) return PROPERTY_ADDRESS;
   if (room.code === '旧屋') return room.name || '';
@@ -88,14 +79,16 @@ export function buildReceiptData({ room, bill, prevBill, receiptNo, today }) {
 }
 
 const W = 900;
-const H = 600;
+const H = 560;
 const PADDING = 50;
 const TABLE_W = W - PADDING * 2;
-const BG = '#fce4d6';
-const INK = '#222';
-const RULE = '#333';
 
-const COL_WIDTHS = [180, 90, 90, 90, 130, 130];
+const BG = '#fadade';
+const INK = '#222';
+const NO_COLOR = '#ff8c00';
+const FONT = 'SimSun, "宋体", serif';
+
+const COL_WIDTHS = [180, 90, 90, 90, 90, 130, 130];
 const COL_X = (() => {
   const xs = [PADDING];
   for (let i = 0; i < COL_WIDTHS.length; i++) xs.push(xs[i] + COL_WIDTHS[i]);
@@ -104,7 +97,17 @@ const COL_X = (() => {
 
 const HEADER_Y = 175;
 const ROW_H = 38;
-const TABLE_BOTTOM = HEADER_Y + ROW_H * (RECEIPT_ROWS.length + 1);
+const TABLE_HEADERS = ['项 目', '上 月', '本 月', '实 用', '单 价', '金额小计(元)', '备 注'];
+const ROW_COUNT = 4; // 水费 / 电费 / 租金 / 拆分行(垃圾费+网络费)
+const TABLE_BOTTOM = HEADER_Y + ROW_H * (ROW_COUNT + 2); // +2 = header row + total row
+
+const RECEIPT_ROWS = [
+  { key: 'water_fee',    label: '水费(吨)',  hasUsage: true  },
+  { key: 'elec_fee',     label: '电费(度)',  hasUsage: true  },
+  { key: 'rent',         label: '租金(元)',  hasUsage: false },
+  { key: 'garbage_fee',  label: '垃圾费(元)', hasUsage: false },
+  { key: 'internet_fee', label: '网络费(元)', hasUsage: false },
+];
 
 export function drawReceipt(ctx, data) {
   drawBackground(ctx);
