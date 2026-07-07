@@ -161,7 +161,7 @@ function drawTable(ctx, { rows, total, totalCN }) {
   ctx.save();
   ctx.fillStyle = INK;
   ctx.strokeStyle = INK;
-  ctx.font = '22px sans-serif';
+  ctx.font = `22px ${FONT}`;
   ctx.textBaseline = 'middle';
 
   drawTableGrid(ctx);
@@ -224,7 +224,7 @@ function drawTableHeader(ctx) {
 
 function drawCell(ctx, text, colStart, span, align, bold) {
   const left = COL_X[colStart];
-  const right = colStart + span < COL_X.length ? COL_X[colStart + span] : COL_X[COL_X.length - 1] + COL_WIDTHS[COL_WIDTHS.length - 1];
+  const right = colStart + span < COL_X.length ? COL_X[colStart + span] : PADDING + TABLE_W;
   const width = right - left;
   let x;
   if (align === 'left') x = left + 10;
