@@ -128,23 +128,25 @@ function drawHeader(ctx, { userName, receiptNo, date }) {
   ctx.save();
   ctx.fillStyle = INK;
   ctx.textBaseline = 'middle';
+  ctx.font = `bold 48px ${FONT}`;
 
-  ctx.font = 'bold 48px sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText('收  据', W / 2 - 80, 80);
 
-  ctx.font = '24px sans-serif';
+  ctx.fillStyle = NO_COLOR;
+  ctx.font = `24px ${FONT}`;
   ctx.textAlign = 'right';
   ctx.fillText(`NO:${receiptNo}`, W - PADDING, 80);
 
-  ctx.font = '22px sans-serif';
+  ctx.fillStyle = INK;
+  ctx.font = `22px ${FONT}`;
   ctx.textAlign = 'left';
   ctx.fillText(`用户名称: ${userName}`, PADDING, 120);
 
   ctx.textAlign = 'right';
   ctx.fillText(date, W - PADDING, 120);
 
-  ctx.strokeStyle = RULE;
+  ctx.strokeStyle = INK;
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(PADDING, 148);
