@@ -282,7 +282,7 @@ function drawTableTotal(ctx, total, totalCN) {
 function drawSignature(ctx) {
   ctx.save();
   ctx.fillStyle = INK;
-  ctx.font = '22px sans-serif';
+  ctx.font = `22px ${FONT}`;
   ctx.textBaseline = 'middle';
 
   const y = TABLE_BOTTOM + 80;
@@ -293,10 +293,10 @@ function drawSignature(ctx) {
   ctx.strokeStyle = INK;
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(PADDING + 90, y + 2);
-  ctx.lineTo(PADDING + 250, y + 2);
-  ctx.moveTo(W / 2 + 90, y + 2);
-  ctx.lineTo(W / 2 + 250, y + 2);
+  ctx.moveTo(PADDING + 100, y + 18);
+  ctx.lineTo(PADDING + 260, y + 18);
+  ctx.moveTo(W / 2 + 100, y + 18);
+  ctx.lineTo(W / 2 + 260, y + 18);
   ctx.stroke();
   ctx.restore();
 }
