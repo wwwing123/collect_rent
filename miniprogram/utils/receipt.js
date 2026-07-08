@@ -242,7 +242,7 @@ function drawTableHeader(ctx) {
   });
 }
 
-function drawCell(ctx, text, colStart, span, align, bold) {
+function drawCell(ctx, text, colStart, span, align, bold, rowIdx, fontSize = 22) {
   const left = COL_X[colStart];
   const right = colStart + span < COL_X.length ? COL_X[colStart + span] : PADDING + TABLE_W;
   const width = right - left;
@@ -250,10 +250,11 @@ function drawCell(ctx, text, colStart, span, align, bold) {
   if (align === 'left') x = left + 10;
   else if (align === 'right') x = right - 10;
   else x = left + width / 2;
-  ctx.font = `${bold ? 'bold ' : ''}22px ${FONT}`;
+  ctx.font = `${bold ? 'bold ' : ''}${fontSize}px ${FONT}`;
   ctx.fillStyle = INK;
   ctx.textAlign = align;
-  ctx.fillText(text || '', x, HEADER_Y + ROW_H * (currentRow + 1) + ROW_H / 2);
+  const r = rowIdx === undefined ? currentRow : rowIdx;
+  ctx.fillText(text || '', x, HEADER_Y + ROW_H * (r + 1) + ROW_H / 2);
 }
 
 function drawTableBody(ctx, rows) {
@@ -291,12 +292,10 @@ function drawTableBody(ctx, rows) {
 
 function drawTableTotal(ctx, total, totalCN) {
   currentRow = ROW_COUNT;
-  drawCell(ctx, `合计人民币（大写）: ${totalCN}`, 0, 5, 'left', false);
-  ctx.font = `bold 24px ${FONT}`;
-  ctx.fillStyle = INK;
-  ctx.textAlign = 'right';
-  const right = COL_X[6];
-  ctx.fillText(`¥${total}`, right - 10, HEADER_Y + ROW_H * (currentRow + 1) + ROW_H / 2);
+  // CN 大写文字：cols 0-4（span 5），左对齐，bold
+  drawCell(ctx, `合计人民币（大写）: ${totalCN}`, 0, 5, 'left', true, ROW_COUNT);
+  // ¥金额：cols 5-6（span 2），右对齐，bold 24px
+  drawCell(ctx, `¥${total}`, 5, 2, 'right', true, ROW_COUNT, 24);
 }
 
 function drawSignature(ctx) {
