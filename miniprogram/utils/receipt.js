@@ -110,6 +110,15 @@ const RECEIPT_ROWS = [
   { key: 'internet_fee', label: '网络费(元)', hasUsage: false },
 ];
 
+// 哪些 (rowIdx, colX_idx) 在该行被合并，跳过竖线段
+// rowIdx: 0=header, 1=water, 2=elec, 3=rent, 4=split, 5=total
+// 当前布局：rent 描述跨 cols 1-4、split 垃圾费跨 cols 1-2 + 网络费跨 cols 4-5、total CN 跨 cols 0-4 + 金额跨 cols 5-6
+const SKIP_VERTICALS = {
+  3: [2, 3, 4],       // rent row: 描述跨 cols 1-4
+  4: [2, 5],          // split row: 垃圾费跨 cols 1-2、网络费跨 cols 4-5
+  5: [1, 2, 3, 4, 6], // total row: CN 跨 cols 0-4、金额跨 cols 5-6
+};
+
 let currentRow = 0;
 
 export function drawReceipt(ctx, data) {
@@ -174,35 +183,43 @@ function drawTable(ctx, { rows, total, totalCN }) {
 
 function drawTableGrid(ctx) {
   const left = PADDING;
-  const right = PADDING + COL_WIDTHS.reduce((a, b) => a + b, 0);
+  const right = PADDING + TABLE_W;
   ctx.lineWidth = 1;
   ctx.strokeStyle = INK;
   ctx.beginPath();
-  // 7 列的纵向分隔线
-  for (let i = 0; i < COL_X.length; i++) {
-    ctx.moveTo(COL_X[i], HEADER_Y);
-    ctx.lineTo(COL_X[i], TABLE_BOTTOM);
-  }
-  // 右侧边框
-  ctx.moveTo(right, HEADER_Y);
-  ctx.lineTo(right, TABLE_BOTTOM);
-  // 拆分行（row index 3）的中间竖线：col 3 左边界
-  const splitRowY = HEADER_Y + ROW_H * 3;
-  const splitRowBottom = HEADER_Y + ROW_H * 4;
-  ctx.moveTo(COL_X[3], splitRowY);
-  ctx.lineTo(COL_X[3], splitRowBottom);
-  // 表头下边线
+
+  // ── 横线（修复 bug A：补顶部；修复 bug C：补拆分行下边） ──
+  // 表格顶边
+  ctx.moveTo(left, HEADER_Y);
+  ctx.lineTo(right, HEADER_Y);
+  // 表头下边
   ctx.moveTo(left, HEADER_Y + ROW_H);
   ctx.lineTo(right, HEADER_Y + ROW_H);
-  // 每个数据行下边线
-  for (let r = 1; r <= ROW_COUNT; r++) {
+  // 每个数据行下边（包括拆分行 = r=ROW_COUNT+1）
+  for (let r = 1; r <= ROW_COUNT + 1; r++) {
     const y = HEADER_Y + ROW_H * r;
     ctx.moveTo(left, y);
     ctx.lineTo(right, y);
   }
-  // 合计行下边线
+  // 合计行下边
   ctx.moveTo(left, TABLE_BOTTOM);
   ctx.lineTo(right, TABLE_BOTTOM);
+
+  // ── 纵线（修复 bug B：合并区竖线按行跳过） ──
+  for (let i = 0; i < COL_X.length; i++) {
+    const x = COL_X[i];
+    let prevY = HEADER_Y;
+    for (let r = 0; r <= ROW_COUNT + 1; r++) {
+      const y = HEADER_Y + ROW_H * (r + 1);
+      const skip = SKIP_VERTICALS[r] && SKIP_VERTICALS[r].includes(i);
+      if (!skip) {
+        ctx.moveTo(x, prevY);
+        ctx.lineTo(x, y);
+      }
+      prevY = y;
+    }
+  }
+
   ctx.stroke();
 }
 
