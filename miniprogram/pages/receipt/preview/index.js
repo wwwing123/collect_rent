@@ -2,8 +2,8 @@ import { callRentApi } from '../../../utils/api.js';
 import { currentYearMonth } from '../../../utils/format.js';
 import { buildReceiptData, drawReceipt } from '../../../utils/receipt.js';
 
-const RECEIPT_W = 900;
-const RECEIPT_H = 560;
+const RECEIPT_W = 930;
+const RECEIPT_H = 460;
 
 Page({
   data: {
