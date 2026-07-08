@@ -304,18 +304,21 @@ function drawSignature(ctx) {
   ctx.font = `22px ${FONT}`;
   ctx.textBaseline = 'middle';
 
-  const y = TABLE_BOTTOM + 80;
+  const y = TABLE_BOTTOM + 30;  // SIG_GAP = 30
   ctx.textAlign = 'left';
   ctx.fillText('开票人:', PADDING, y);
-  ctx.fillText('收款人:', W / 2, y);
+  // 收款人靠最右：label 起始 x = W - PADDING - 260，下划线延伸到 W - PADDING
+  ctx.fillText('收款人:', W - PADDING - 260, y);
 
   ctx.strokeStyle = INK;
   ctx.lineWidth = 1;
   ctx.beginPath();
+  // 开票人下划线
   ctx.moveTo(PADDING + 100, y + 18);
   ctx.lineTo(PADDING + 260, y + 18);
-  ctx.moveTo(W / 2 + 100, y + 18);
-  ctx.lineTo(W / 2 + 260, y + 18);
+  // 收款人下划线（靠最右）
+  ctx.moveTo(W - PADDING - 160, y + 18);
+  ctx.lineTo(W - PADDING, y + 18);
   ctx.stroke();
   ctx.restore();
 }
