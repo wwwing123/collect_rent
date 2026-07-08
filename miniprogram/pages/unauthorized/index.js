@@ -3,7 +3,10 @@ import { joinFamily } from '../../utils/auth.js';
 Page({
   data: { code: '', err: '' },
   onInput(e) {
-    this.setData({ code: e.detail.value.toUpperCase(), err: '' });
+    // Vant Weapp 的 van-field 在 extraEventParams=false（默认）时，
+    // e.detail 本身就是字符串值；只有 extraEventParams=true 时才是 {value, cursor} 对象。
+    const raw = typeof e.detail === 'string' ? e.detail : (e.detail && e.detail.value) || '';
+    this.setData({ code: raw.toUpperCase(), err: '' });
   },
   async onSubmit() {
     const code = (this.data.code || '').trim();

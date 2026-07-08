@@ -10,7 +10,7 @@
       <view class="grid">
         <van-field label="月租 (元)" title-width="10em" type="digit" value="{{ item.rent }}" data-key="rent" data-code="{{ item.code }}" bind:change="onField" />
         <van-field label="水单价 (元/吨)" title-width="10em" type="digit" value="{{ item.water_unit_price }}" data-key="water_unit_price" data-code="{{ item.code }}" bind:change="onField" />
-        <van-field label="电电价 (元/度)" title-width="10em" type="digit" value="{{ item.elec_unit_price }}" data-key="elec_unit_price" data-code="{{ item.code }}" bind:change="onField" />
+        <van-field label="电单价 (元/度)" title-width="10em" type="digit" value="{{ item.elec_unit_price }}" data-key="elec_unit_price" data-code="{{ item.code }}" bind:change="onField" />
         <van-field label="垃圾费 (元)" title-width="10em" type="digit" value="{{ item.garbage_fee }}" data-key="garbage_fee" data-code="{{ item.code }}" bind:change="onField" />
         <van-field label="网络费 (元)" title-width="10em" type="digit" value="{{ item.internet_fee }}" data-key="internet_fee" data-code="{{ item.code }}" bind:change="onField" />
       </view>
