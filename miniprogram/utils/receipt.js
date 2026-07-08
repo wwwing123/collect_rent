@@ -325,16 +325,19 @@ function drawVerticalText(ctx) {
   ctx.fillStyle = INK;
   ctx.font = `20px ${FONT}`;
   ctx.textBaseline = 'middle';
+  ctx.textAlign = 'center';
 
   const cx = W - 25;
   const cyStart = HEADER_Y + 20;
-  const lineH = 28;
+  const lineH = 20;
+  const groupGap = 30;  // 两组之间的额外间隙
+  // 字符顺序：存根（白） 客户（红）
+  const chars = ['存', '根', '（', '白', '）', '客', '户', '（', '红', '）'];
 
-  ctx.translate(cx, cyStart);
-  ctx.rotate(-Math.PI / 2);
-  ctx.textAlign = 'center';
-  ctx.fillText('存根(白)', 0, 0);
-  ctx.fillText('客户(红)', 0, lineH);
-  ctx.fillText('', 0, lineH * 2);
+  chars.forEach((char, i) => {
+    let offset = i * lineH;
+    if (i >= 5) offset += groupGap;  // 第二组往下多空 groupGap
+    ctx.fillText(char, cx, cyStart + offset);
+  });
   ctx.restore();
 }
