@@ -1,26 +1,118 @@
 <view class="container">
-  <view class="header">
-    <text class="back" bindtap="onPrevMonth">←</text>
-    <text class="month">{{ monthLabel }}</text>
-    <text class="next" bindtap="onNextMonth">→</text>
-  </view>
-  <view class="room-label">{{ room.code }}{{ room.name ? ' · ' + room.name : '' }}</view>
-  <view class="ref" wx:if="{{ prevWater !== null }}">上月水表：{{ prevWater }} 吨 · 上月电表：{{ prevElec }} 度</view>
-  <view class="ref first" wx:else>无上月读数，本次只收基础费用（房租+垃圾+网络）</view>
-
-  <view class="form">
-    <van-field label="水表 (吨)" type="digit" value="{{ waterReading }}" data-key="waterReading" bind:change="onReading" />
-    <van-field label="电表 (度)" type="digit" value="{{ elecReading }}" data-key="elecReading" bind:change="onReading" />
-  </view>
-
-  <view class="breakdown">
-    <view class="row"><text>月租</text><text>¥{{ breakdown.base_fee - breakdown.garbage_fee - breakdown.internet_fee }}</text></view>
-    <view class="row" wx:if="{{ breakdown.garbage_fee > 0 }}"><text>垃圾费</text><text>¥{{ breakdown.garbage_fee }}</text></view>
-    <view class="row" wx:if="{{ breakdown.internet_fee > 0 }}"><text>网络费</text><text>¥{{ breakdown.internet_fee }}</text></view>
-    <view class="row"><text>水（{{ breakdown.water_usage }} 吨 × ¥{{ room.water_unit_price }}）</text><text>¥{{ breakdown.water_fee }}</text></view>
-    <view class="row"><text>电（{{ breakdown.elec_usage }} 度 × ¥{{ room.elec_unit_price }}）</text><text>¥{{ breakdown.elec_fee }}</text></view>
-    <view class="row total"><text>合计应缴</text><text>¥{{ breakdown.total }}</text></view>
+  <!-- 月份选择器 -->
+  <view class="month-bar">
+    <view class="month-arrow" bindtap="onPrevMonth" hover-class="press">
+      <text class="arrow">‹</text>
+    </view>
+    <view class="month-display">
+      <text class="month-eyebrow">账目月份</text>
+      <text class="month-name">{{ monthLabel }}</text>
+    </view>
+    <view class="month-arrow" bindtap="onNextMonth" hover-class="press">
+      <text class="arrow">›</text>
+    </view>
   </view>
 
-  <van-button type="primary" block bind:click="onSave">保存</van-button>
+  <!-- 房号 + 总览 -->
+  <view class="room-card">
+    <view class="room-info">
+      <text class="room-code">{{ room.code }}</text>
+      <text class="room-name">{{ room.name || '未命名' }}</text>
+    </view>
+  </view>
+
+  <!-- 上月参考 -->
+  <view class="ref {{ prevWater === null ? 'ref-first' : '' }}">
+    <text wx:if="{{ prevWater !== null }}" class="ref-text">上月读数 · 水 <text class="ref-num">{{ prevWater }}</text> 吨 · 电 <text class="ref-num">{{ prevElec }}</text> 度</text>
+    <text wx:else class="ref-text">无上月读数 · 此次只收基础费用（房租 + 垃圾 + 网络）</text>
+  </view>
+
+  <!-- 度数输入 -->
+  <view class="form-card">
+    <view class="form-title">
+      <view class="form-bar"></view>
+      <text>本次读数</text>
+    </view>
+    <view class="form-grid">
+      <view class="form-row">
+        <view class="form-label">
+          <text class="form-label-text">水表</text>
+          <text class="form-label-unit">吨</text>
+        </view>
+        <view class="form-input-wrap">
+          <van-field
+            type="digit"
+            value="{{ waterReading }}"
+            data-key="waterReading"
+            bind:change="onReading"
+            placeholder="请输入"
+            border="{{ false }}"
+            custom-style="padding:0;background:transparent;"
+          />
+        </view>
+      </view>
+      <view class="form-divider"></view>
+      <view class="form-row">
+        <view class="form-label">
+          <text class="form-label-text">电表</text>
+          <text class="form-label-unit">度</text>
+        </view>
+        <view class="form-input-wrap">
+          <van-field
+            type="digit"
+            value="{{ elecReading }}"
+            data-key="elecReading"
+            bind:change="onReading"
+            placeholder="请输入"
+            border="{{ false }}"
+            custom-style="padding:0;background:transparent;"
+          />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 费用明细 -->
+  <view class="breakdown-card">
+    <view class="form-title">
+      <view class="form-bar"></view>
+      <text>费用明细</text>
+    </view>
+    <view class="rows">
+      <view class="row">
+        <text class="row-label">月租</text>
+        <text class="row-val tabular">¥{{ breakdown.base_fee - breakdown.garbage_fee - breakdown.internet_fee }}</text>
+      </view>
+      <view class="row" wx:if="{{ breakdown.garbage_fee > 0 }}">
+        <text class="row-label">垃圾费</text>
+        <text class="row-val tabular">¥{{ breakdown.garbage_fee }}</text>
+      </view>
+      <view class="row" wx:if="{{ breakdown.internet_fee > 0 }}">
+        <text class="row-label">网络费</text>
+        <text class="row-val tabular">¥{{ breakdown.internet_fee }}</text>
+      </view>
+      <view class="row">
+        <text class="row-label">水 <text class="row-sub">{{ breakdown.water_usage }} 吨 × ¥{{ room.water_unit_price }}</text></text>
+        <text class="row-val tabular">¥{{ breakdown.water_fee }}</text>
+      </view>
+      <view class="row">
+        <text class="row-label">电 <text class="row-sub">{{ breakdown.elec_usage }} 度 × ¥{{ room.elec_unit_price }}</text></text>
+        <text class="row-val tabular">¥{{ breakdown.elec_fee }}</text>
+      </view>
+    </view>
+    <view class="total-row">
+      <text class="total-eyebrow">合计应缴</text>
+      <view class="total-right">
+        <text class="total-currency">¥</text>
+        <text class="total-amount tabular">{{ breakdown.total }}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="save-wrap">
+    <view class="save-btn" bindtap="onSave" hover-class="press">
+      <text class="save-label">保存账目</text>
+    </view>
+  </view>
 </view>

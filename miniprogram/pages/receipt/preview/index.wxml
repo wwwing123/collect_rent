@@ -1,12 +1,28 @@
 <view class="container">
-  <view wx:if="{{ loading }}" class="loading">加载中...</view>
-
-  <view wx:else class="canvas-wrap">
-    <canvas type="2d" id="receipt-canvas" class="receipt-canvas"></canvas>
+  <view wx:if="{{ loading }}" class="loading">
+    <view class="loading-seal"></view>
+    <text class="loading-text">收据展开中...</text>
   </view>
 
-  <view class="actions" wx:if="{{ !loading }}">
-    <van-button type="primary" block bind:click="onSave">保存到相册</van-button>
-    <button class="share-btn" open-type="share">发送给朋友</button>
+  <view wx:else class="content">
+    <view class="caption">
+      <view class="caption-bar"></view>
+      <text class="caption-eyebrow">收 据 预 览</text>
+      <view class="caption-bar"></view>
+    </view>
+
+    <view class="canvas-wrap">
+      <view class="canvas-shadow"></view>
+      <canvas type="2d" id="receipt-canvas" class="receipt-canvas"></canvas>
+    </view>
+
+    <view class="actions">
+      <view class="action primary" bindtap="onSave" hover-class="press">
+        <text class="action-label">保存到相册</text>
+      </view>
+      <button class="action ghost" open-type="share" hover-class="press">
+        <text class="action-label ghost-label">发送给朋友</text>
+      </button>
+    </view>
   </view>
 </view>

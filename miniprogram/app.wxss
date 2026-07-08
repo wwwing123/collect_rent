@@ -1,13 +1,96 @@
+/* ============================================================
+   暖阳收租 · 全局设计令牌
+   色调：奶白米底 + 落日橙 + 翠绿点缀
+   ============================================================ */
+
 page {
-  background: #f6f6f6;
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  /* —— 调色板 —— */
+  --paper:        #FAF6F0;   /* 暖米色主底 */
+  --paper-2:      #FFFFFF;   /* 卡片底 */
+  --paper-3:      #F5EFE5;   /* 凹陷/分组底 */
+  --paper-4:      #F1E9DA;   /* 强分组 */
+  --ink:          #2A2622;   /* 主文 */
+  --ink-2:        #5C564F;   /* 次文 */
+  --ink-3:        #908A82;   /* 三级/标签 */
+  --ink-4:        #B8B0A4;   /* 占位/禁用 */
+  --line:         #ECE4D4;   /* 浅色分隔 */
+  --line-2:       #D8CFBE;   /* 强分隔 */
+  --amber:        #EA7B3A;   /* 落日橙 · 主色 */
+  --amber-2:      #D86A2A;   /* 落日橙 · 按下 */
+  --amber-3:      #B85820;   /* 落日橙 · 深 */
+  --amber-soft:   #FDEEE2;   /* 橙 · 浅底 */
+  --amber-tint:   #FFF6EE;   /* 橙 · 更浅 */
+  --gold:         #C8923A;   /* 金 */
+  --gold-soft:    #F8EDD7;   /* 金 · 浅底 */
+  --jade:         #4A8B6F;   /* 翠 · 成功/已收 */
+  --jade-soft:    #E0F0E8;   /* 翠 · 浅底 */
+  --warn:         #C8923A;
+  --shadow-sm:    0 2rpx 8rpx rgba(58, 36, 14, 0.05);
+  --shadow-md:    0 8rpx 24rpx rgba(58, 36, 14, 0.07), 0 1rpx 0 rgba(58, 36, 14, 0.03);
+  --shadow-lg:    0 16rpx 48rpx rgba(58, 36, 14, 0.10), 0 2rpx 0 rgba(58, 36, 14, 0.04);
+  --shadow-amber:  0 8rpx 22rpx rgba(234, 123, 58, 0.22);
+
+  /* —— 字号（rpx）—— */
+  --fs-xs:   22rpx;
+  --fs-sm:   24rpx;
+  --fs-base: 28rpx;
+  --fs-md:   30rpx;
+  --fs-lg:   34rpx;
+  --fs-xl:   40rpx;
+  --fs-2xl:  48rpx;
+  --fs-3xl:  64rpx;
+  --fs-num:  60rpx;
+
+  /* —— 间距（rpx）—— */
+  --s-1:  8rpx;
+  --s-2:  16rpx;
+  --s-3:  24rpx;
+  --s-4:  32rpx;
+  --s-5:  40rpx;
+  --s-6:  48rpx;
+  --s-8:  64rpx;
+
+  /* —— 圆角 —— */
+  --r-sm:  8rpx;
+  --r-md:  16rpx;
+  --r-lg:  20rpx;
+  --r-xl:  28rpx;
+  --r-pill: 999rpx;
+
+  /* —— 字体 —— */
+  --font-serif:  "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong", "SimSun", "宋体", serif;
+  --font-sans:   -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-num:    -apple-system, "DIN Alternate", "Helvetica Neue", "PingFang SC", sans-serif;
+
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: 1.55;
 }
+
+/* —— 通用重置 —— */
 button {
   background: initial;
+  font-family: var(--font-sans);
 }
-button:focus {
-  outline: 0;
+button:focus { outline: 0; }
+button::after { border: none; }
+view, text { box-sizing: border-box; }
+
+/* —— 数字字距 —— */
+.tabular { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+/* —— 入场动画 —— */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12rpx); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-button::after {
-  border: none;
+@keyframes fade {
+  from { opacity: 0; } to { opacity: 1; }
 }
+
+.rise-1 { animation: rise 420ms cubic-bezier(.2,.7,.2,1) 60ms both; }
+.rise-2 { animation: rise 420ms cubic-bezier(.2,.7,.2,1) 140ms both; }
+.rise-3 { animation: rise 420ms cubic-bezier(.2,.7,.2,1) 220ms both; }
+.rise-4 { animation: rise 420ms cubic-bezier(.2,.7,.2,1) 300ms both; }

@@ -5,19 +5,31 @@
     name="{{ item.code }}"
     title="{{ item.code + (item.name ? ' · ' + item.name : '') }}"
   >
+    <view class="room-head">
+      <view class="room-code">{{ item.code }}</view>
+      <view class="room-name">{{ item.name || '尚未设置备注姓名' }}</view>
+    </view>
+
     <view class="section">
-      <view class="section-title">费率</view>
+      <view class="section-title">
+        <view class="section-bar"></view>
+        <text>费率</text>
+      </view>
       <view class="grid">
-        <van-field label="月租 (元)" title-width="10em" type="digit" value="{{ item.rent }}" data-key="rent" data-code="{{ item.code }}" bind:change="onField" />
-        <van-field label="水单价 (元/吨)" title-width="10em" type="digit" value="{{ item.water_unit_price }}" data-key="water_unit_price" data-code="{{ item.code }}" bind:change="onField" />
-        <van-field label="电单价 (元/度)" title-width="10em" type="digit" value="{{ item.elec_unit_price }}" data-key="elec_unit_price" data-code="{{ item.code }}" bind:change="onField" />
-        <van-field label="垃圾费 (元)" title-width="10em" type="digit" value="{{ item.garbage_fee }}" data-key="garbage_fee" data-code="{{ item.code }}" bind:change="onField" />
-        <van-field label="网络费 (元)" title-width="10em" type="digit" value="{{ item.internet_fee }}" data-key="internet_fee" data-code="{{ item.code }}" bind:change="onField" />
+        <van-field label="月租" type="digit" value="{{ item.rent }}" data-key="rent" data-code="{{ item.code }}" bind:change="onField" placeholder="0" />
+        <van-field label="水单价" type="digit" value="{{ item.water_unit_price }}" data-key="water_unit_price" data-code="{{ item.code }}" bind:change="onField" placeholder="元/吨" />
+        <van-field label="电单价" type="digit" value="{{ item.elec_unit_price }}" data-key="elec_unit_price" data-code="{{ item.code }}" bind:change="onField" placeholder="元/度" />
+        <van-field label="垃圾费" type="digit" value="{{ item.garbage_fee }}" data-key="garbage_fee" data-code="{{ item.code }}" bind:change="onField" placeholder="0" />
+        <van-field label="网络费" type="digit" value="{{ item.internet_fee }}" data-key="internet_fee" data-code="{{ item.code }}" bind:change="onField" placeholder="0" />
       </view>
     </view>
+
     <view class="section">
-      <view class="section-title">备注</view>
-      <van-field label="备注姓名" value="{{ item.name }}" data-key="name" data-code="{{ item.code }}" bind:change="onField" />
+      <view class="section-title">
+        <view class="section-bar"></view>
+        <text>备注</text>
+      </view>
+      <van-field label="备注姓名" value="{{ item.name }}" data-key="name" data-code="{{ item.code }}" bind:change="onField" placeholder="例：张老师" />
     </view>
   </van-collapse-item>
 </van-collapse>

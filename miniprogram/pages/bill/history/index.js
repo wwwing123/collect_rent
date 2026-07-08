@@ -66,18 +66,60 @@ Page({
       if (i === 0) return 0;
       return Math.max(0, (b.elec_reading ?? 0) - (sorted[i - 1].elec_reading ?? 0));
     });
+    const ink = '#1A1814';
+    const ink2 = '#8A857A';
+    const line = '#E5DFD2';
     this.chart.setOption({
-      grid: { left: 50, right: 50, top: 40, bottom: 30 },
-      legend: { top: 0 },
-      tooltip: { trigger: 'axis' },
-      xAxis: { type: 'category', data: months },
+      grid: { left: 50, right: 50, top: 56, bottom: 36, containLabel: true },
+      legend: {
+        top: 8, right: 0,
+        textStyle: { color: ink, fontFamily: 'Source Han Serif SC, serif', fontSize: 12 },
+        icon: 'roundRect',
+        itemWidth: 18, itemHeight: 4,
+      },
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: '#FBF8F2',
+        borderColor: line,
+        borderWidth: 1,
+        textStyle: { color: ink, fontFamily: 'Source Han Serif SC, serif' },
+        axisPointer: { lineStyle: { color: line } },
+      },
+      xAxis: {
+        type: 'category', data: months,
+        axisLine: { lineStyle: { color: line } },
+        axisLabel: { color: ink2, fontFamily: 'Source Han Serif SC, serif' },
+        axisTick: { show: false },
+      },
       yAxis: [
-        { type: 'value', name: '水(吨)', position: 'left', axisLine: { lineStyle: { color: '#3a8ee6' } } },
-        { type: 'value', name: '电(度)', position: 'right', axisLine: { lineStyle: { color: '#f59e0b' } } },
+        { type: 'value', name: '水(吨)', position: 'left',
+          nameTextStyle: { color: '#3a8ee6', fontSize: 11 },
+          axisLine: { show: true, lineStyle: { color: '#3a8ee6' } },
+          splitLine: { lineStyle: { color: line, type: 'dashed' } },
+          axisLabel: { color: ink2 },
+        },
+        { type: 'value', name: '电(度)', position: 'right',
+          nameTextStyle: { color: '#B8893D', fontSize: 11 },
+          axisLine: { show: true, lineStyle: { color: '#B8893D' } },
+          splitLine: { show: false },
+          axisLabel: { color: ink2 },
+        },
       ],
       series: [
-        { name: '水(吨)', type: 'line', data: water, smooth: true, yAxisIndex: 0, itemStyle: { color: '#3a8ee6' } },
-        { name: '电(度)', type: 'line', data: elec,  smooth: true, yAxisIndex: 1, itemStyle: { color: '#f59e0b' } },
+        { name: '水(吨)', type: 'line', data: water, smooth: true, yAxisIndex: 0,
+          symbol: 'circle', symbolSize: 8,
+          lineStyle: { width: 3, color: '#3a8ee6' },
+          itemStyle: { color: '#3a8ee6', borderColor: '#FBF8F2', borderWidth: 2 },
+          areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [
+            { offset: 0, color: 'rgba(58,142,230,0.18)' },
+            { offset: 1, color: 'rgba(58,142,230,0)' },
+          ]}},
+        },
+        { name: '电(度)', type: 'line', data: elec,  smooth: true, yAxisIndex: 1,
+          symbol: 'circle', symbolSize: 8,
+          lineStyle: { width: 3, color: '#B8893D' },
+          itemStyle: { color: '#B8893D', borderColor: '#FBF8F2', borderWidth: 2 },
+        },
       ],
     });
   },

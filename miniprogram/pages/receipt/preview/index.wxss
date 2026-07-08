@@ -1,47 +1,151 @@
 .container {
   min-height: 100vh;
-  background: #f6f6f6;
+  background: var(--paper);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 32rpx 32rpx 64rpx;
+  padding: var(--s-5) var(--s-3) var(--s-8);
   box-sizing: border-box;
 }
 
+/* —— 加载态 —— */
 .loading {
-  margin-top: 200rpx;
-  color: #888;
-  font-size: 28rpx;
+  margin-top: 240rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-3);
+}
+.loading-seal {
+  width: 80rpx;
+  height: 80rpx;
+  background: var(--amber);
+  border-radius: 50%;
+  box-shadow: var(--shadow-amber);
+  animation: fade 800ms ease-in-out infinite alternate;
+  opacity: 0.6;
+}
+.loading-text {
+  font-size: var(--fs-sm);
+  color: var(--ink-3);
+  letter-spacing: 0.16em;
 }
 
+/* —— 主体内容 —— */
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* —— "收据预览"标题 —— */
+.caption {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-4);
+}
+.caption-bar {
+  width: 56rpx;
+  height: 1rpx;
+  background: var(--line-2);
+}
+.caption-eyebrow {
+  font-size: var(--fs-xs);
+  color: var(--ink-2);
+  letter-spacing: 0.32em;
+  font-weight: 600;
+  padding-right: 0.32em;
+}
+
+/* —— 画布容器 —— */
 .canvas-wrap {
+  position: relative;
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: 48rpx;
+  margin-bottom: var(--s-6);
 }
-
+.canvas-shadow {
+  position: absolute;
+  top: 40rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(ellipse, rgba(234, 123, 58, 0.18), transparent 70%);
+  filter: blur(30rpx);
+  pointer-events: none;
+  z-index: 0;
+}
 .receipt-canvas {
+  position: relative;
+  z-index: 1;
   width: 670rpx;
   height: 417rpx;
   background: #fadade;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  border-radius: var(--r-md);
+  box-shadow:
+    0 24rpx 64rpx rgba(58, 36, 14, 0.18),
+    0 4rpx 12rpx rgba(58, 36, 14, 0.10);
+  animation: rise 600ms cubic-bezier(.2,.7,.2,1) 100ms both;
 }
 
+/* —— 操作按钮组 —— */
 .actions {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 24rpx;
+  gap: var(--s-2);
 }
+.action {
+  width: 100%;
+  height: 96rpx;
+  border-radius: var(--r-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  padding-right: 0.32em;
+  transition: background 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  /* 重置 <button> 默认样式 */
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.action.press { opacity: 0.88; }
+.action.primary {
+  background: var(--amber);
+  color: #FFFFFF;
+  box-shadow: var(--shadow-amber);
+}
+.action.primary.press { background: var(--amber-2); box-shadow: 0 4rpx 12rpx rgba(234, 123, 58, 0.22); }
 
-.share-btn {
-  background: #fff;
-  color: #07c160;
-  border: 2rpx solid #07c160;
-  border-radius: 8rpx;
-  font-size: 28rpx;
-  line-height: 80rpx;
-  height: 80rpx;
+.action.ghost {
+  /* <button> 重置 —— 微信原生 button 在 flex 列里默认不 stretch，必须 !important 强制 */
+  display: block !important;
+  width: 100% !important;
+  align-self: stretch !important;
+  min-width: 100%;
+  box-sizing: border-box;
+  background: var(--paper-3);
+  color: var(--ink-2);
+  border: 1rpx solid var(--line);
+  box-shadow: none;
   padding: 0;
+  margin: 0;
+  line-height: 94rpx;
+  font-size: 30rpx;
+  text-align: center;
+  border-radius: var(--r-pill);
 }
+.action.ghost::before,
+.action.ghost::after {
+  border: none;
+  content: none;
+}
+.action.ghost.press { background: var(--paper-4); opacity: 0.92; }
+.ghost-label { color: var(--ink-2); }

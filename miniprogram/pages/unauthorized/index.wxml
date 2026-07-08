@@ -1,13 +1,35 @@
 <view class="wrap">
-  <view class="title">尚未加入家庭</view>
-  <view class="tip">向家庭管理员索取邀请码，输入下方以加入。</view>
-  <van-field
-    label="邀请码"
-    placeholder="6 位字母数字"
-    value="{{ code }}"
-    bind:input="onInput"
-    maxlength="{{ 6 }}"
-  />
-  <van-button type="primary" block bind:click="onSubmit">加入</van-button>
-  <view wx:if="{{ err }}" class="err">{{ err }}</view>
+  <view class="hero">
+    <view class="logo">
+      <text class="logo-glyph">家</text>
+    </view>
+    <text class="title">尚未加入家庭</text>
+    <text class="tip">向家庭管理员索取邀请码，输入下方以加入。</text>
+  </view>
+
+  <view class="field-card">
+    <view class="field-label">
+      <view class="field-bar"></view>
+      <text>邀请码</text>
+    </view>
+    <view class="field-input">
+      <van-field
+        placeholder="6 位字母数字"
+        value="{{ code }}"
+        bind:input="onInput"
+        maxlength="{{ 6 }}"
+        border="{{ false }}"
+        custom-style="padding:0;background:transparent;text-align:center;font-family:-apple-system,DIN Alternate,Helvetica Neue,sans-serif;font-size:44rpx;letter-spacing:0.32em;font-weight:600;color:#2A2622;"
+      />
+    </view>
+  </view>
+
+  <view wx:if="{{ err }}" class="err">
+    <view class="err-dot"></view>
+    <text>{{ err }}</text>
+  </view>
+
+  <view class="join-btn" bindtap="onSubmit" hover-class="press">
+    <text class="join-label">加入家庭</text>
+  </view>
 </view>

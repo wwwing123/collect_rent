@@ -1,7 +1,24 @@
 <view class="container">
-  <view class="row">
-    <text class="label">家庭邀请码</text>
-    <text class="code" bindtap="onCopy">{{ code }}</text>
+  <view class="hero">
+    <view class="hero-eyebrow">
+      <view class="hero-bar"></view>
+      <text>家庭邀请码</text>
+      <view class="hero-bar"></view>
+    </view>
+    <view class="code-card" bindtap="onCopy" hover-class="press">
+      <text class="code-text">{{ code }}</text>
+      <view class="code-hint">
+        <text class="code-hint-glyph">⧉</text>
+        <text>轻触复制</text>
+      </view>
+    </view>
+    <text class="hero-tip">将此码分享给家人，输入后即可加入家庭共享账本。</text>
   </view>
-  <van-button type="warning" block bind:click="onRegenerate">重新生成</van-button>
+
+  <view class="footer">
+    <view class="regen-btn" bindtap="onRegenerate" hover-class="press">
+      <text class="regen-label">重新生成邀请码</text>
+    </view>
+    <text class="regen-warn">重新生成后旧码立即失效，请先通知所有家人。</text>
+  </view>
 </view>

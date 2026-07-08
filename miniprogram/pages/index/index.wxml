@@ -1,8 +1,32 @@
 <view class="container">
-  <view class="header">
-    <view class="title">本月 ({{ currentYM }}): ¥{{ sumTotal }}</view>
-    <van-button size="mini" bind:click="onHeaderSettings">⚙️</van-button>
+  <!-- 问候 + 总览 -->
+  <view class="greeting">
+    <view class="greeting-left">
+      <text class="greeting-hello">本月账本</text>
+      <view class="greeting-summary">
+        <text class="summary-text">共 {{ rooms.length }} 间房 · 本月应收</text>
+        <text class="summary-num tabular">¥{{ sumTotal }}</text>
+      </view>
+    </view>
+    <view wx:if="{{ isAdmin }}" class="settings-link" bindtap="onHeaderSettings" hover-class="press">
+      <text class="settings-link-glyph">⚙</text>
+    </view>
   </view>
+
+  <!-- 月份选择 -->
+  <view class="month-bar">
+    <view class="month-arrow" bindtap="onPrevMonth" hover-class="press">
+      <text class="arrow-glyph">‹</text>
+    </view>
+    <view class="month-display">
+      <text class="month-name">{{ currentYM }}</text>
+    </view>
+    <view class="month-arrow" bindtap="onNextMonth" hover-class="press">
+      <text class="arrow-glyph">›</text>
+    </view>
+  </view>
+
+  <!-- 房间列表 -->
   <view class="cards">
     <room-card
       wx:for="{{ rooms }}"

@@ -1,19 +1,255 @@
-.container { padding: 30rpx 40rpx; display: flex; flex-direction: column; }
-.header {
+.container {
+  padding: var(--s-3) var(--s-3) var(--s-6);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+/* —— 月份选择器 —— */
+.month-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--s-2) var(--s-3);
+  background: var(--paper-2);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-sm);
+}
+.month-arrow {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--paper-3);
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+.month-arrow.press { background: var(--amber-soft); opacity: 0.85; }
+.arrow {
+  font-family: var(--font-serif);
+  font-size: 40rpx;
+  color: var(--amber);
+  line-height: 1;
+  font-weight: 500;
+}
+.month-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+.month-eyebrow {
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+  letter-spacing: 0.16em;
+  margin-bottom: 4rpx;
+}
+.month-name {
+  font-family: var(--font-serif);
+  font-size: var(--fs-xl);
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.08em;
+}
+
+/* —— 房号卡 —— */
+.room-card {
+  background: var(--paper-2);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-lg);
+  padding: var(--s-3) var(--s-4);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+}
+.room-info { display: flex; align-items: baseline; gap: var(--s-2); }
+.room-code {
+  font-family: var(--font-serif);
+  font-size: 48rpx;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+.room-name {
+  font-size: var(--fs-sm);
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+
+/* —— 上月参考 —— */
+.ref {
+  background: var(--paper-3);
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-md);
+  border-left: 4rpx solid var(--ink-3);
+}
+.ref.ref-first { border-left-color: var(--amber); background: var(--amber-tint); }
+.ref-text {
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+.ref-num {
+  font-family: var(--font-num);
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  margin: 0 2rpx;
+}
+
+/* —— 通用卡片标题 —— */
+.form-card,
+.breakdown-card {
+  background: var(--paper-2);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-lg);
+  padding: var(--s-3) var(--s-3) var(--s-2);
+  box-shadow: var(--shadow-sm);
+}
+.form-title {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-size: var(--fs-sm);
+  color: var(--ink);
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  margin-bottom: var(--s-2);
+}
+.form-bar {
+  width: 6rpx;
+  height: 24rpx;
+  background: var(--amber);
+  border-radius: 2rpx;
+}
+
+/* —— 读数输入行 —— */
+.form-grid { display: flex; flex-direction: column; }
+.form-row {
+  display: flex;
+  align-items: center;
+  padding: var(--s-2) 0;
+}
+.form-label {
+  flex: 0 0 140rpx;
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+}
+.form-label-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--ink);
+}
+.form-label-unit {
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+}
+.form-input-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: var(--paper);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-md);
+  padding: 0 var(--s-2);
+  height: 72rpx;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.form-input-wrap:focus-within {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 4rpx rgba(234, 123, 58, 0.10);
+}
+.form-divider {
+  height: 1rpx;
+  background: var(--line);
+  margin: 0 var(--s-3);
+}
+
+/* —— 费用明细 —— */
+.rows { display: flex; flex-direction: column; }
+.row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 20rpx 0;
-  border-bottom: 1rpx solid #eee;
-  margin-bottom: 30rpx;
+  align-items: baseline;
+  padding: var(--s-2) 0;
+  border-bottom: 1rpx dashed var(--line);
 }
-.back, .next { font-size: 40rpx; padding: 0 20rpx; }
-.month { font-size: 32rpx; font-weight: 600; }
-.room-label { font-size: 36rpx; font-weight: 600; margin-bottom: 20rpx; }
-.ref { background: #f6f6f6; padding: 16rpx 20rpx; border-radius: 8rpx; font-size: 24rpx; color: #666; margin-bottom: 30rpx; }
-.ref.first { background: #fff7e6; }
-.form { margin-bottom: 30rpx; }
-.breakdown { background: #fafafa; padding: 20rpx; border-radius: 8rpx; margin-bottom: 30rpx; }
-.row { display: flex; justify-content: space-between; padding: 8rpx 0; font-size: 26rpx; }
-.row.total { border-top: 2rpx solid #333; margin-top: 8rpx; padding-top: 16rpx; font-size: 32rpx; font-weight: 600; }
-.row.total text:last-child { color: #e54545; }
+.row:last-child { border-bottom: none; }
+.row-label {
+  font-size: var(--fs-base);
+  color: var(--ink-2);
+}
+.row-sub {
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+  margin-left: 8rpx;
+}
+.row-val {
+  font-family: var(--font-num);
+  font-size: var(--fs-base);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.total-row {
+  margin-top: var(--s-2);
+  padding-top: var(--s-3);
+  border-top: 2rpx solid var(--ink);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.total-eyebrow {
+  font-size: var(--fs-sm);
+  color: var(--ink);
+  letter-spacing: 0.16em;
+  font-weight: 600;
+}
+.total-right {
+  display: flex;
+  align-items: baseline;
+  gap: 4rpx;
+}
+.total-currency {
+  font-size: 32rpx;
+  color: var(--amber);
+  font-weight: 500;
+}
+.total-amount {
+  font-family: var(--font-num);
+  font-size: 56rpx;
+  font-weight: 600;
+  color: var(--amber);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+/* —— 保存按钮 —— */
+.save-wrap { padding: var(--s-3) 0 0; }
+.save-btn {
+  height: 100rpx;
+  background: var(--amber);
+  color: #FFFFFF;
+  border-radius: var(--r-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-amber);
+  transition: background 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.save-btn.press {
+  background: var(--amber-2);
+  box-shadow: 0 2rpx 6rpx rgba(234, 123, 58, 0.22);
+  opacity: 0.92;
+}
+.save-label {
+  font-size: 32rpx;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  padding-right: 0.32em;
+}

@@ -1,14 +1,169 @@
-.container { padding: 24rpx; }
-.room-label { font-size: 30rpx; font-weight: 600; margin-bottom: 16rpx; }
-.backfill { background: #fff; padding: 20rpx; border-radius: 8rpx; margin-bottom: 20rpx; }
-.backfill-hint { font-size: 22rpx; color: #999; margin-top: 10rpx; line-height: 1.5; }
-.table { border: 1rpx solid #eee; border-radius: 8rpx; overflow: hidden; background: #fff; margin-bottom: 30rpx; }
-.tr { display: flex; padding: 16rpx 12rpx; border-bottom: 1rpx solid #f0f0f0; font-size: 24rpx; }
-.tr.th { background: #f6f6f6; font-weight: 600; }
-.tr-hover { background: #f0f0f0; }
-.td { flex: 1; text-align: center; }
-.td:first-child { flex: 1.2; text-align: left; }
-.td.right { flex: 1.2; text-align: right; font-weight: 600; color: #e54545; }
-.section-title { font-size: 26rpx; color: #888; padding: 12rpx 0; }
-.chart { width: 100%; height: 480rpx; }
-.footer { padding: 30rpx 0; }
+.container {
+  padding: var(--s-3) var(--s-3) var(--s-6);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+/* —— 房号头 —— */
+.room-card {
+  background: var(--paper-2);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-lg);
+  padding: var(--s-3) var(--s-4);
+  box-shadow: var(--shadow-sm);
+}
+.room-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+.room-eyebrow {
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+  letter-spacing: 0.16em;
+}
+.room-label {
+  font-family: var(--font-serif);
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+}
+
+/* —— 补录区 —— */
+.backfill {
+  background: var(--paper-2);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s-3);
+}
+.backfill-btn {
+  height: 84rpx;
+  background: var(--amber-tint);
+  border: 1rpx dashed rgba(234, 123, 58, 0.35);
+  border-radius: var(--r-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--amber-2);
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+.backfill-btn.press {
+  background: var(--amber-soft);
+  border-color: var(--amber);
+  color: var(--amber-3);
+  opacity: 0.92;
+}
+.backfill-label {
+  font-size: var(--fs-base);
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+.backfill-hint {
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+  margin-top: var(--s-2);
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+}
+
+/* —— 表格 —— */
+.table {
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--paper-2);
+  box-shadow: var(--shadow-sm);
+}
+.tr {
+  display: flex;
+  align-items: center;
+  padding: var(--s-2);
+  border-bottom: 1rpx solid var(--line);
+  font-size: var(--fs-sm);
+  transition: background 0.15s ease;
+}
+.tr:last-child { border-bottom: none; }
+.tr.th {
+  background: var(--paper-3);
+  font-weight: 600;
+  color: var(--ink-2);
+  letter-spacing: 0.04em;
+  font-size: var(--fs-xs);
+}
+.tr-hover { background: var(--amber-tint); }
+.td {
+  flex: 1;
+  text-align: center;
+  color: var(--ink);
+}
+.td.col-month {
+  flex: 1.4;
+  text-align: left;
+  font-family: var(--font-serif);
+  color: var(--ink);
+}
+.td.col-total {
+  flex: 1.3;
+  text-align: right;
+  font-family: var(--font-num);
+  font-weight: 600;
+  color: var(--amber);
+}
+.tr.highlight {
+  background: var(--amber-tint);
+  border-left: 4rpx solid var(--amber);
+}
+
+/* —— 区块标题 —— */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-size: var(--fs-sm);
+  color: var(--ink);
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  margin-top: var(--s-3);
+  margin-bottom: var(--s-1);
+}
+.section-bar {
+  width: 6rpx;
+  height: 22rpx;
+  background: var(--amber);
+  border-radius: 2rpx;
+}
+
+/* —— 图表 —— */
+.chart {
+  width: 100%;
+  height: 480rpx;
+  background: var(--paper-2);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s-2);
+  box-shadow: var(--shadow-sm);
+}
+
+/* —— 底部导出按钮 —— */
+.footer { padding: var(--s-3) 0 0; }
+.export-btn {
+  height: 96rpx;
+  background: var(--ink);
+  color: #FFFFFF;
+  border-radius: var(--r-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 20rpx rgba(42, 38, 34, 0.18);
+  transition: box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.export-btn.press { box-shadow: 0 2rpx 6rpx rgba(42, 38, 34, 0.18); opacity: 0.9; }
+.export-label {
+  font-size: 30rpx;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  padding-right: 0.32em;
+}

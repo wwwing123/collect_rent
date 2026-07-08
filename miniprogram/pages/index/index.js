@@ -9,11 +9,13 @@ Page({
     rooms: [],
     currentYM: '',
     sumTotal: 0,
+    isAdmin: false,
   },
 
   async onShow() {
     const admin = app.globalData.isAdmin || await isAdmin();
     app.globalData.isAdmin = admin;
+    this.setData({ isAdmin: admin });
     if (!admin) {
       wx.reLaunch({ url: '/pages/unauthorized/index' });
       return;
@@ -41,9 +43,11 @@ Page({
 
   render(bills, ym) {
     let sum = 0;
+    let pending = 0;
     const rooms = bills.map(({ room, bill }) => {
       const total = bill?.total ?? 0;
       sum += total;
+      if (room.status === 'active' && !bill) pending += 1;
       return {
         room,
         billTotal: total,
@@ -51,11 +55,23 @@ Page({
         billLabel: formatYearMonthLabel(ym),
       };
     });
-    this.setData({ rooms, currentYM: ym, sumTotal: sum.toFixed(2) });
+    this.setData({
+      rooms,
+      currentYM: ym,
+      sumTotal: sum.toFixed(2),
+      pendingCount: pending,
+    });
   },
   
   onHeaderSettings() {
     wx.navigateTo({ url: '/pages/settings/index' });
+  },
+
+  onPrevMonth() {
+    wx.showToast({ title: '仅显示本月', icon: 'none' });
+  },
+  onNextMonth() {
+    wx.showToast({ title: '仅显示本月', icon: 'none' });
   },
 
   onSettings(e) {

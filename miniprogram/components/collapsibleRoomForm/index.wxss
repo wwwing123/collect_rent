@@ -1,4 +1,58 @@
-.section { padding: 16rpx 0; }
-.section-title { font-size: 26rpx; color: #888; padding: 8rpx 16rpx; }
-.hint { font-size: 22rpx; color: #aaa; padding: 0 16rpx 12rpx; }
+.room-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  padding: 0 var(--s-3) var(--s-2);
+  border-bottom: 1rpx solid var(--line);
+  margin-bottom: var(--s-3);
+}
+.room-code {
+  font-family: var(--font-serif);
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--amber);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+.room-name {
+  font-size: var(--fs-sm);
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+
+.section { padding: var(--s-2) 0; }
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+  letter-spacing: 0.16em;
+  padding: 0 var(--s-2) var(--s-2);
+  font-weight: 600;
+}
+.section-bar {
+  display: inline-block;
+  width: 6rpx;
+  height: 22rpx;
+  background: var(--amber);
+  border-radius: 2rpx;
+}
 .grid { display: flex; flex-direction: column; }
+
+.grid .van-field,
+.section .van-field {
+  background: var(--paper-2);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-md);
+  margin: 0 var(--s-2) var(--s-2);
+  padding: var(--s-1) var(--s-3);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.grid .van-field:active,
+.section .van-field:focus-within {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 4rpx rgba(234, 123, 58, 0.10);
+}
+.grid .van-field::after,
+.section .van-field::after { border: none; }

@@ -1,12 +1,22 @@
 <view class="container">
-  <view class="banner">此页设置影响未来账单的费率；改历史读数会自动重算后续账单</view>
+  <view class="banner">
+    <view class="banner-bar"></view>
+    <view class="banner-text">
+      <text class="banner-title">费率说明</text>
+      <text class="banner-sub">此页设置影响未来账单的费率；改历史读数会自动重算后续账单。</text>
+    </view>
+  </view>
+
   <collapsible-room-form
     rooms="{{ rooms }}"
     active-names="{{ activeNames }}"
     bind:collapsechange="onCollapse"
     bind:fieldchange="onField"
   />
+
   <view class="footer">
-    <van-button type="primary" block bind:click="onSave">保存全部</van-button>
+    <view class="save-btn" bindtap="onSave" hover-class="press">
+      <text class="save-label">保存全部</text>
+    </view>
   </view>
 </view>

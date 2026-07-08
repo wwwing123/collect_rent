@@ -1,12 +1,118 @@
-.container { padding: 40rpx; }
-.row {
-  background: #fff;
-  border-radius: 12rpx;
-  padding: 30rpx;
-  margin-bottom: 30rpx;
+.container {
+  padding: var(--s-5) var(--s-3) var(--s-6);
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 12rpx;
+  gap: var(--s-6);
 }
-.label { color: #888; font-size: 26rpx; }
-.code { font-size: 56rpx; font-weight: 600; letter-spacing: 8rpx; color: #06c; }
+
+/* —— Hero · 邀请码 —— */
+.hero {
+  background: var(--paper-2);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-lg);
+  padding: var(--s-5) var(--s-4) var(--s-4);
+  position: relative;
+  box-shadow: var(--shadow-md);
+}
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  font-size: var(--fs-xs);
+  color: var(--ink-2);
+  letter-spacing: 0.32em;
+  font-weight: 600;
+  padding-right: 0.32em;
+  margin-bottom: var(--s-4);
+}
+.hero-bar {
+  width: 40rpx;
+  height: 1rpx;
+  background: var(--line-2);
+}
+
+/* 邀请码主卡 */
+.code-card {
+  background: var(--paper);
+  border: 1.5rpx dashed rgba(234, 123, 58, 0.30);
+  border-radius: var(--r-md);
+  padding: var(--s-4) var(--s-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+  transition: border-color 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+}
+.code-card.press {
+  border-color: var(--amber);
+  background: var(--amber-tint);
+  opacity: 0.9;
+}
+.code-text {
+  font-family: var(--font-num);
+  font-size: 88rpx;
+  font-weight: 600;
+  color: var(--amber);
+  letter-spacing: 0.32em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  padding-right: 0.32em;
+}
+.code-hint {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+  letter-spacing: 0.16em;
+}
+.code-hint-glyph {
+  font-size: 26rpx;
+  color: var(--ink-2);
+}
+.hero-tip {
+  display: block;
+  margin-top: var(--s-3);
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+/* —— 重新生成 —— */
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.regen-btn {
+  height: 96rpx;
+  background: transparent;
+  color: var(--amber);
+  border: 1.5rpx solid var(--amber);
+  border-radius: var(--r-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+.regen-btn.press {
+  background: var(--amber);
+  color: #FFFFFF;
+  opacity: 0.92;
+}
+.regen-label {
+  font-size: 30rpx;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  padding-right: 0.32em;
+}
+.regen-warn {
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+  text-align: center;
+  letter-spacing: 0.04em;
+}

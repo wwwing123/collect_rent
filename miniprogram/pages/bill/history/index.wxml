@@ -1,21 +1,31 @@
 <view class="container">
-  <view class="room-label">{{ roomLabel }}</view>
+  <!-- 房号头 -->
+  <view class="room-card">
+    <view class="room-info">
+      <text class="room-eyebrow">账单历史</text>
+      <text class="room-label">{{ roomLabel }}</text>
+    </view>
+  </view>
 
+  <!-- 补录 -->
   <view class="backfill">
     <picker mode="date" fields="month" value="{{ backfillYM }}" start="2018-01" end="2099-12" bindchange="onPickMonth">
-      <van-button type="default" block>补录历史读数</van-button>
+      <view class="backfill-btn" hover-class="press">
+        <text class="backfill-label">＋ 补录历史读数</text>
+      </view>
     </picker>
     <view class="backfill-hint">选择月份后跳转录入页。补录中间月份后再保存后续月份，会自动用最新的上月读数重算。</view>
   </view>
 
+  <!-- 表格 -->
   <view class="table">
     <view class="tr th">
-      <text class="td">月份</text>
+      <text class="td col-month">月份</text>
       <text class="td">租金</text>
       <text class="td">水</text>
       <text class="td">电</text>
       <text class="td">其他</text>
-      <text class="td right">合计</text>
+      <text class="td col-total">合计</text>
     </view>
     <view wx:for="{{ history }}" wx:key="year_month"
       class="tr {{ item.highlight ? 'highlight' : '' }}"
@@ -23,21 +33,26 @@
       data-yearmonth="{{ item.year_month }}"
       bindtap="onTapRow"
     >
-      <text class="td">{{ item.year_month }}</text>
-      <text class="td">{{ item.rent }}</text>
-      <text class="td">{{ item.water_fee }}</text>
-      <text class="td">{{ item.elec_fee }}</text>
-      <text class="td">{{ item.other }}</text>
-      <text class="td right">{{ item.total }}</text>
+      <text class="td col-month">{{ item.year_month }}</text>
+      <text class="td tabular">{{ item.rent }}</text>
+      <text class="td tabular">{{ item.water_fee }}</text>
+      <text class="td tabular">{{ item.elec_fee }}</text>
+      <text class="td tabular">{{ item.other }}</text>
+      <text class="td col-total tabular">{{ item.total }}</text>
     </view>
   </view>
 
-  <view class="section-title">水/电用量趋势</view>
+  <view class="section-title">
+    <view class="section-bar"></view>
+    <text>水 · 电 用量趋势</text>
+  </view>
   <view class="chart">
     <ec-canvas id="history-chart" canvas-id="history-chart" ec="{{ ec }}"></ec-canvas>
   </view>
 
   <view class="footer">
-    <van-button type="primary" block bind:click="onExport">导出 CSV</van-button>
+    <view class="export-btn" bindtap="onExport" hover-class="press">
+      <text class="export-label">↓ 导出 CSV</text>
+    </view>
   </view>
 </view>

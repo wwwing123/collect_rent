@@ -1,5 +1,7 @@
 {
-  "navigationBarTitleText": "收租",
+  "navigationBarTitleText": "收租管家",
+  "navigationBarBackgroundColor": "#EA7B3A",
+  "navigationBarTextStyle": "white",
   "usingComponents": {
     "room-card": "/components/roomCard/index",
     "van-button": "@vant/weapp/button/index"

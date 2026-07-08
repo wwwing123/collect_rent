@@ -1,10 +1,66 @@
-.container { padding: 24rpx; }
-.banner {
-  background: #f6f6f6;
-  padding: 16rpx 20rpx;
-  font-size: 24rpx;
-  color: #888;
-  border-radius: 8rpx;
-  margin-bottom: 20rpx;
+.container {
+  padding: var(--s-3) var(--s-3) 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
 }
-.footer { padding: 30rpx 0; }
+
+/* —— 顶部说明条 —— */
+.banner {
+  display: flex;
+  gap: var(--s-2);
+  padding: var(--s-3);
+  background: var(--amber-tint);
+  border: 1rpx solid rgba(234, 123, 58, 0.20);
+  border-radius: var(--r-md);
+}
+.banner-bar {
+  flex: 0 0 4rpx;
+  background: var(--amber);
+  border-radius: 2rpx;
+  align-self: stretch;
+}
+.banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+.banner-title {
+  font-size: var(--fs-sm);
+  color: var(--ink);
+  letter-spacing: 0.16em;
+  font-weight: 600;
+}
+.banner-sub {
+  font-size: var(--fs-xs);
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+/* —— 保存按钮 —— */
+.footer {
+  padding: var(--s-4) 0 var(--s-6);
+}
+.save-btn {
+  height: 96rpx;
+  background: var(--amber);
+  color: #FFFFFF;
+  border-radius: var(--r-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-amber);
+  transition: background 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.save-btn.press {
+  box-shadow: 0 2rpx 6rpx rgba(234, 123, 58, 0.22);
+  background: var(--amber-2);
+  opacity: 0.92;
+}
+.save-label {
+  font-size: 30rpx;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  padding-right: 0.32em;
+}
