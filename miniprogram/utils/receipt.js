@@ -158,9 +158,10 @@ function drawHeader(ctx, { userName, receiptNo, date }) {
   const labelText = '用户名称: ';
   ctx.font = `22px ${FONT}`;
   ctx.fillText(labelText, PADDING, 120);
-  const labelW = ctx.measureText(labelText).width;
+  // 用硬编码偏移（22px Microsoft YaHei 下 "用户名称: " 约 110px），避免依赖 measureText
+  const LABEL_W = 110;
   ctx.font = `bold 22px ${FONT}`;
-  ctx.fillText(userName, PADDING + labelW, 120);
+  ctx.fillText(userName, PADDING + LABEL_W, 120);
   ctx.textAlign = 'right';
   ctx.font = `bold 22px ${FONT}`;
   ctx.fillText(date, W - PADDING, 120);
