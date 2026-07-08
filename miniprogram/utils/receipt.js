@@ -79,24 +79,24 @@ export function buildReceiptData({ room, bill, prevBill, receiptNo, today }) {
   };
 }
 
-const W = 900;
-const H = 560;
-const PADDING = 50;
+const W = 930;
+const H = 460;
+const PADDING = 70;
 const TABLE_W = W - PADDING * 2;
 
 const BG = '#fadade';
 const INK = '#222';
 const NO_COLOR = '#ff8c00';
-const FONT = 'SimSun, "宋体", serif';
+const FONT = '"Microsoft YaHei", "微软雅黑", sans-serif';
 
-const COL_WIDTHS = [180, 90, 90, 90, 90, 130, 130];
+const COL_WIDTHS = [175, 85, 85, 120, 75, 160, 90];
 const COL_X = (() => {
   const xs = [PADDING];
   for (let i = 0; i < COL_WIDTHS.length; i++) xs.push(xs[i] + COL_WIDTHS[i]);
   return xs;
 })();
 
-const HEADER_Y = 175;
+const HEADER_Y = 145;
 const ROW_H = 38;
 const TABLE_HEADERS = ['项 目', '上 月', '本 月', '实 用', '单 价', '金额小计(元)', '备 注'];
 const ROW_COUNT = 4; // 水费 / 电费 / 租金 / 拆分行(垃圾费+网络费)
