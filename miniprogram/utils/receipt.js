@@ -5,8 +5,9 @@ const UNITS = ['', '拾', '佰', '仟'];
 export function getReceiptUserName(room) {
   if (!room) return PROPERTY_ADDRESS;
   if (room.code === '旧屋') return room.name || '';
+  const code = room.code ? ` ${room.code}` : '';
   const name = room.name ? ` ${room.name}` : '';
-  return `${PROPERTY_ADDRESS}${name}`;
+  return `${PROPERTY_ADDRESS}${code}${name}`;
 }
 
 export function formatReceiptNo(n) {

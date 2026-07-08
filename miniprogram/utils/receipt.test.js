@@ -9,9 +9,9 @@ import {
   buildReceiptData,
 } from './receipt.js';
 
-test('getReceiptUserName: 普通房间 拼接前缀', () => {
+test('getReceiptUserName: 普通房间 拼接房号', () => {
   const room = { code: '101', name: 'A栋403房' };
-  assert.equal(getReceiptUserName(room), '南东新村6巷92号 A栋403房');
+  assert.equal(getReceiptUserName(room), '南东新村6巷92号 101 A栋403房');
 });
 
 test('getReceiptUserName: 旧屋 只用 room.name', () => {
@@ -19,9 +19,9 @@ test('getReceiptUserName: 旧屋 只用 room.name', () => {
   assert.equal(getReceiptUserName(room), '朗枝岗170号');
 });
 
-test('getReceiptUserName: 普通房间 name 为空时只有前缀', () => {
+test('getReceiptUserName: 普通房间 name 为空时只拼接房号', () => {
   const room = { code: '101', name: '' };
-  assert.equal(getReceiptUserName(room), '南东新村6巷92号');
+  assert.equal(getReceiptUserName(room), '南东新村6巷92号 101');
 });
 
 test('getReceiptUserName: room 为空时返回默认地址', () => {
@@ -92,7 +92,7 @@ test('buildReceiptData: 完整账单（含上期）', () => {
   };
   const prevBill = { water_reading: 659, elec_reading: 11627 };
   const data = buildReceiptData({ room, bill, prevBill, receiptNo: 1, today: new Date(2026, 5, 30) });
-  assert.equal(data.userName, '南东新村6巷92号 A栋403房');
+  assert.equal(data.userName, '南东新村6巷92号 101 A栋403房');
   assert.equal(data.receiptNo, '000001');
   assert.equal(data.date, '2026年6月30日');
   assert.equal(data.rows.length, 5);
