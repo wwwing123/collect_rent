@@ -46,8 +46,37 @@
     <view class="section-bar"></view>
     <text>水 · 电 用量趋势</text>
   </view>
-  <view class="chart">
-    <ec-canvas id="history-chart" canvas-id="history-chart" ec="{{ ec }}"></ec-canvas>
+  <view class="chart-card">
+    <view class="chart-head">
+      <view class="chart-stats">
+        <view class="stat">
+          <view class="stat-head">
+            <view class="stat-dot stat-dot-water"></view>
+            <text class="stat-label">水 · 最近一期</text>
+          </view>
+          <view class="stat-val">
+            <text class="stat-num tabular">{{ latestWater }}</text>
+            <text class="stat-unit"> 吨</text>
+          </view>
+          <text wx:if="{{ latestYM }}" class="stat-ym">{{ latestYM }}</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat">
+          <view class="stat-head">
+            <view class="stat-dot stat-dot-elec"></view>
+            <text class="stat-label">电 · 最近一期</text>
+          </view>
+          <view class="stat-val">
+            <text class="stat-num tabular">{{ latestElec }}</text>
+            <text class="stat-unit"> 度</text>
+          </view>
+          <text wx:if="{{ latestYM }}" class="stat-ym">{{ latestYM }}</text>
+        </view>
+      </view>
+    </view>
+    <view class="chart-canvas">
+      <ec-canvas id="history-chart" canvas-id="history-chart" ec="{{ ec }}"></ec-canvas>
+    </view>
   </view>
 
   <view class="footer">

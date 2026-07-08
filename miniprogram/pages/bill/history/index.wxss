@@ -136,15 +136,86 @@
   border-radius: 2rpx;
 }
 
-/* —— 图表 —— */
-.chart {
-  width: 100%;
-  height: 480rpx;
+/* —— 图表卡 —— */
+.chart-card {
   background: var(--paper-2);
   border: 1rpx solid var(--line);
-  border-radius: var(--r-md);
-  padding: var(--s-2);
+  border-radius: var(--r-lg);
   box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.chart-head {
+  position: relative;
+  padding: var(--s-3) var(--s-3) var(--s-2);
+  background: linear-gradient(180deg, var(--paper-3) 0%, var(--paper-2) 100%);
+  border-bottom: 1rpx solid var(--line);
+  overflow: hidden;
+}
+.chart-head::before {
+  content: '';
+  position: absolute;
+  top: -40rpx; right: -40rpx;
+  width: 180rpx; height: 180rpx;
+  background: radial-gradient(circle, rgba(234, 123, 58, 0.10), transparent 65%);
+  pointer-events: none;
+}
+
+.chart-stats {
+  display: flex;
+  align-items: stretch;
+  gap: var(--s-3);
+  position: relative;
+  z-index: 1;
+}
+.stat { flex: 1; display: flex; flex-direction: column; gap: 4rpx; }
+.stat-head { display: flex; align-items: center; gap: 8rpx; }
+.stat-dot {
+  width: 10rpx; height: 10rpx; border-radius: 50%;
+  box-shadow: 0 0 0 3rpx rgba(0, 0, 0, 0.04);
+}
+.stat-dot-water { background: #4A8FB8; box-shadow: 0 0 0 3rpx rgba(74, 143, 184, 0.18); }
+.stat-dot-elec  { background: #E5854A; box-shadow: 0 0 0 3rpx rgba(229, 133, 74, 0.20); }
+.stat-label {
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+}
+.stat-val {
+  display: flex;
+  align-items: baseline;
+  gap: 4rpx;
+  margin-top: 2rpx;
+}
+.stat-num {
+  font-family: var(--font-num);
+  font-size: 44rpx;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.stat-unit {
+  font-size: var(--fs-sm);
+  color: var(--ink-3);
+}
+.stat-ym {
+  font-size: 20rpx;
+  color: var(--ink-4);
+  letter-spacing: 0.16em;
+  margin-top: 2rpx;
+}
+.stat-divider {
+  width: 1rpx;
+  background: var(--line);
+  margin: 4rpx 0;
+}
+
+.chart-canvas {
+  width: 100%;
+  height: 460rpx;
+  padding: var(--s-2) var(--s-2) var(--s-3);
 }
 
 /* —— 底部导出按钮 —— */
