@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>收据样式预览 · BEFORE vs AFTER</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f5f5f5;
+    margin: 0;
+    padding: 24px;
+  }
+  h1 {
+    text-align: center;
+    margin: 0 0 24px;
+    font-size: 18px;
+    color: #333;
+  }
+  .row {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .col {
+    flex: 0 0 auto;
+    text-align: center;
+  }
+  .col h2 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+  }
+  canvas {
+    background: #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    display: block;
+  }
+</style>
+</head>
+<body>
+<h1>收据样式预览 · BEFORE (当前实现) vs AFTER (调整方案)</h1>
+<div class="row">
+  <div class="col">
+    <h2>BEFORE · 当前实现</h2>
+    <canvas id="before" width="900" height="560"></canvas>
+  </div>
+  <div class="col">
+    <h2>AFTER · 调整方案</h2>
+    <canvas id="after" width="930" height="460"></canvas>
+  </div>
+</div>
+
+<script>
+// ─── 共享数据（来自 shouju.png 参考图 + 设计 spec） ─────────
+const PROPERTY_ADDRESS = '南东新村6巷92号';
+const data = {
+  userName: '南东新村6巷92号 101',  // 去掉 "A栋403" 字眼，只保留房号
+  receiptNo: '5141076',
+  date: '2026年6月30日',
+  rows: [
+    { label: '水费(吨)',  prev: '659',   curr: '676',  usage: '17',  unit: '6.00',   amount: '108.00' },
+    { label: '电费(度)',  prev: '11627', curr: '11979',usage: '352', unit: '0.89',   amount: '314.17' },
+    { label: '租金(元)',  amount: '1400.00' },
+    { label: '垃圾费(元)',amount: '15.00' },
+    { label: '网络费(元)',amount: '50.00' },
+  ],
+  total: '1837.17',
+  totalCN: '壹仟捌佰叁拾柒.壹柒圆整',
+};
+
+// ─── BEFORE: 当前 receipt.js 实现 ─────────────────────────
+const BEFORE = {
+  W: 900, H: 560, PADDING: 50, BG: '#fadade', INK: '#222', NO_COLOR: '#ff8c00',
+  FONT: '"SimSun", "宋体", serif',
+  COL_WIDTHS: [180, 90, 90, 90, 90, 130, 130],
+  HEADER_Y: 175, ROW_H: 38, ROW_COUNT: 4,
+  TABLE_HEADERS: ['项 目', '上 月', '本 月', '实 用', '单 价', '金额小计(元)', '备 注'],
+  SIG_GAP: 80, TITLE_SIZE: 48, TITLE_X_OFFSET: -80,
+  TITLE_Y: 80,
+  SIG_RIGHT_LABEL_X: 450,  // W/2 = 900/2
+  SUB_BOLD: false, HAS_USER_NAME_LINE: true,
+  SUBTITLE_VALUE_BOLD: false,  // 当前实现：整行不加粗
+  RENT_SPAN: 1,
+  SPLIT_GARBAGE_SPAN: 1, SPLIT_INTERNET_SPAN: 1,
+  TOTAL_SPAN: 5, TOTAL_CN_BOLD: false,
+  // 哪些 (rowIdx, colX_idx) 在该行被合并，跳过竖线段
+  // rowIdx: 0=header, 1=water, 2=elec, 3=rent, 4=split, 5=total
+  SKIP_VERTICALS: {
+    3: [2, 3, 4],      // rent: 描述跨 cols 1-4
+    4: [2, 5],         // split: 垃圾费跨 cols 1-2, 网络费跨 cols 4-5
+    5: [1, 2, 3, 4],   // total: CN 跨 cols 0-4
+  },
+};
+
+const AFTER = {
+  W: 930, H: 460, PADDING: 70, BG: '#fadade', INK: '#222', NO_COLOR: '#ff8c00',
+  FONT: '"Microsoft YaHei", "微软雅黑", sans-serif',
+  COL_WIDTHS: [175, 85, 85, 120, 75, 160, 90],
+  HEADER_Y: 145, ROW_H: 38, ROW_COUNT: 4,  // 表格上移 30px 紧凑布局
+  TABLE_HEADERS: ['项 目', '上 月', '本 月', '实 用', '单 价', '金额小计(元)', '备 注'],
+  SIG_GAP: 30, TITLE_SIZE: 40, TITLE_X_OFFSET: 0,
+  TITLE_Y: 60,  // 标题上移 20px
+  SIG_RIGHT_LABEL_X: 600,  // W - PADDING - 260 = 930 - 70 - 260，靠最右
+  SUB_BOLD: false, HAS_USER_NAME_LINE: false,
+  SUBTITLE_VALUE_BOLD: true,  // 调整后：label 不加粗，value 和日期加粗
+  RENT_SPAN: 1,
+  SPLIT_GARBAGE_SPAN: 2, SPLIT_INTERNET_SPAN: 2,
+  TOTAL_SPAN: 5, TOTAL_CN_BOLD: true,
+  SKIP_VERTICALS: {
+    3: [2, 3, 4],      // rent: 描述跨 cols 1-4
+    4: [2, 5],         // split: 垃圾费跨 cols 1-2, 网络费跨 cols 4-5
+    5: [1, 2, 3, 4, 6],   // total: CN 跨 cols 0-4, 金额跨 cols 5-6
+  },
+};
+
+function buildColX(widths, padding) {
+  const xs = [padding];
+  for (let i = 0; i < widths.length; i++) xs.push(xs[i] + widths[i]);
+  return xs;
+}
+
+// 计算哪些 (rowIdx, colX_idx) 在合并区域内，需要跳过竖线段
+// rowIdx: 0=header, 1=water, 2=elec, 3=rent, 4=split, 5=total
+// 直接在 BEFORE/AFTER config 里指定，避免复杂推断
+
+function render(ctx, cfg) {
+  const { W, H, PADDING, BG, INK, NO_COLOR, FONT,
+          COL_WIDTHS, HEADER_Y, ROW_H, ROW_COUNT,
+          TABLE_HEADERS, SIG_GAP, TITLE_SIZE, TITLE_X_OFFSET, TITLE_Y,
+          SIG_RIGHT_LABEL_X,
+          SUB_BOLD, HAS_USER_NAME_LINE, SUBTITLE_VALUE_BOLD,
+          RENT_SPAN,
+          SPLIT_GARBAGE_SPAN, SPLIT_INTERNET_SPAN,
+          TOTAL_SPAN, TOTAL_CN_BOLD } = cfg;
+
+  const COL_X = buildColX(COL_WIDTHS, PADDING);
+  const TABLE_W = W - PADDING * 2;
+  const TABLE_BOTTOM = HEADER_Y + ROW_H * (ROW_COUNT + 2);
+
+  // 背景
+  ctx.fillStyle = BG;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── 标题区 ──
+  ctx.fillStyle = INK;
+  ctx.textBaseline = 'middle';
+
+  ctx.font = `bold ${TITLE_SIZE}px ${FONT}`;
+  ctx.textAlign = 'center';
+  ctx.fillText('收  据', W / 2 + TITLE_X_OFFSET, TITLE_Y);
+
+  ctx.fillStyle = NO_COLOR;
+  ctx.font = `24px ${FONT}`;
+  ctx.textAlign = 'right';
+  ctx.fillText(`NO:${data.receiptNo}`, W - PADDING, TITLE_Y);
+
+  ctx.fillStyle = INK;
+  ctx.textBaseline = 'middle';
+
+  // 用户名称行：label 不加粗，value/日期根据 SUBTITLE_VALUE_BOLD 决定是否加粗
+  const subtitleValueBold = SUBTITLE_VALUE_BOLD;
+  ctx.textAlign = 'left';
+  ctx.font = `22px ${FONT}`;
+  const labelText = '用户名称: ';
+  ctx.fillText(labelText, PADDING, 120);
+  const labelW = ctx.measureText(labelText).width;
+  ctx.font = `${subtitleValueBold ? 'bold ' : ''}22px ${FONT}`;
+  ctx.fillText(data.userName, PADDING + labelW, 120);
+  ctx.textAlign = 'right';
+  ctx.font = `${subtitleValueBold ? 'bold ' : ''}22px ${FONT}`;
+  ctx.fillText(data.date, W - PADDING, 120);
+
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = 1;
+  if (HAS_USER_NAME_LINE) {
+    ctx.beginPath();
+    ctx.moveTo(PADDING, 148);
+    ctx.lineTo(W - PADDING, 148);
+    ctx.stroke();
+  }
+
+  // ── 表格 ──
+  ctx.fillStyle = INK;
+  ctx.strokeStyle = INK;
+  ctx.font = `22px ${FONT}`;
+  ctx.textBaseline = 'middle';
+
+  // 表格外框
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+
+  // ── 横线 ──
+  // 表格顶边
+  ctx.moveTo(PADDING, HEADER_Y);
+  ctx.lineTo(PADDING + TABLE_W, HEADER_Y);
+  // 表头下边
+  ctx.moveTo(PADDING, HEADER_Y + ROW_H);
+  ctx.lineTo(PADDING + TABLE_W, HEADER_Y + ROW_H);
+  // 每个数据行下边（包括 split 行下方 = 合计行上方）
+  for (let r = 1; r <= ROW_COUNT + 1; r++) {
+    const y = HEADER_Y + ROW_H * r;
+    ctx.moveTo(PADDING, y);
+    ctx.lineTo(PADDING + TABLE_W, y);
+  }
+  // 合计行下边
+  ctx.moveTo(PADDING, TABLE_BOTTOM);
+  ctx.lineTo(PADDING + TABLE_W, TABLE_BOTTOM);
+
+  // ── 纵线（按行避开合并区域） ──
+  const skipVerticals = cfg.SKIP_VERTICALS;
+
+  for (let i = 0; i < COL_X.length; i++) {
+    const x = COL_X[i];
+    let prevY = HEADER_Y;
+    for (let r = 0; r <= ROW_COUNT + 1; r++) {
+      const y = HEADER_Y + ROW_H * (r + 1);
+      const isSkipped = skipVerticals[r] && skipVerticals[r].includes(i);
+      if (!isSkipped) {
+        ctx.moveTo(x, prevY);
+        ctx.lineTo(x, y);
+      }
+      prevY = y;
+    }
+  }
+
+  ctx.stroke();
+
+  // 表头
+  ctx.font = `bold 22px ${FONT}`;
+  const cy = HEADER_Y + ROW_H / 2;
+  TABLE_HEADERS.forEach((text, i) => {
+    let x, align;
+    if (i === 0) { x = COL_X[i] + 10; align = 'left'; }
+    else if (i === 5) { x = COL_X[i] + COL_WIDTHS[i] - 10; align = 'right'; }
+    else if (i === 6) { x = COL_X[i] + 10; align = 'left'; }
+    else { x = (COL_X[i] + COL_X[i + 1]) / 2; align = 'center'; }
+    ctx.textAlign = align;
+    ctx.fillText(text, x, cy);
+  });
+
+  // 单元格 helper
+  function drawCell(text, colStart, span, align, bold, rowIdx, fontSize = 22) {
+    const left = COL_X[colStart];
+    const right = colStart + span < COL_X.length ? COL_X[colStart + span] : PADDING + TABLE_W;
+    const width = right - left;
+    let x;
+    if (align === 'left') x = left + 10;
+    else if (align === 'right') x = right - 10;
+    else x = left + width / 2;
+    ctx.font = `${bold ? 'bold ' : ''}${fontSize}px ${FONT}`;
+    ctx.fillStyle = INK;
+    ctx.textAlign = align;
+    ctx.fillText(text || '', x, HEADER_Y + ROW_H * (rowIdx + 1) + ROW_H / 2);
+  }
+
+  // 数据行
+  const today = new Date(2026, 6, 1);
+  const monthLabel = `${today.getFullYear()}年${today.getMonth() + 1}月份房租`;
+
+  // 行 1: 水费
+  drawCell(data.rows[0].label, 0, 1, 'left', false, 0);
+  drawCell(data.rows[0].prev, 1, 1, 'center', false, 0);
+  drawCell(data.rows[0].curr, 2, 1, 'center', false, 0);
+  drawCell(data.rows[0].usage, 3, 1, 'center', false, 0);
+  drawCell(data.rows[0].unit, 4, 1, 'center', false, 0);
+  drawCell(data.rows[0].amount, 5, 1, 'right', false, 0);
+
+  // 行 2: 电费
+  drawCell(data.rows[1].label, 0, 1, 'left', false, 1);
+  drawCell(data.rows[1].prev, 1, 1, 'center', false, 1);
+  drawCell(data.rows[1].curr, 2, 1, 'center', false, 1);
+  drawCell(data.rows[1].usage, 3, 1, 'center', false, 1);
+  drawCell(data.rows[1].unit, 4, 1, 'center', false, 1);
+  drawCell(data.rows[1].amount, 5, 1, 'right', false, 1);
+
+  // 行 3: 租金
+  drawCell(data.rows[2].label, 0, 1, 'left', false, 2);
+  if (RENT_SPAN === 4) {
+    drawCell(monthLabel, 1, 1, 'center', false, 2);
+    drawCell(data.rows[2].amount, 2, RENT_SPAN, 'right', false, 2);
+  } else {
+    drawCell(monthLabel, 1, 4, 'center', false, 2);
+    drawCell(data.rows[2].amount, 5, 1, 'right', false, 2);
+  }
+
+  // 行 4: 拆分行
+  const garbage = data.rows[3];
+  const internet = data.rows[4];
+  drawCell(garbage.label, 0, 1, 'left', false, 3);
+  drawCell(garbage.amount, 1, SPLIT_GARBAGE_SPAN, 'right', false, 3);
+  drawCell(internet.label, 3, 1, 'left', false, 3);
+  drawCell(internet.amount, 4, SPLIT_INTERNET_SPAN, 'right', false, 3);
+  // 小计位置: 如果金额跨 col 5 则小计放 col 6，否则 col 5
+  const subtotalCol = (SPLIT_GARBAGE_SPAN === 2 && SPLIT_INTERNET_SPAN === 2) ? 6 : 5;
+  const subtotal = (Number(garbage.amount) + Number(internet.amount)).toFixed(2);
+  drawCell(subtotal, subtotalCol, 1, 'right', false, 3);
+
+  // 行 5: 合计
+  if (TOTAL_SPAN === 5) {
+    // AFTER: CN 跨 cols 0-4，金额跨 cols 5-6
+    drawCell(`合计人民币（大写）: ${data.totalCN}`, 0, 5, 'left', TOTAL_CN_BOLD, ROW_COUNT);
+    drawCell(`¥${data.total}`, 5, 2, 'right', true, ROW_COUNT, 24);
+  } else if (TOTAL_SPAN === 4) {
+    // 旧 AFTER: CN 跨 cols 0-3，金额跨 cols 4-5
+    drawCell(`合计人民币（大写）: ${data.totalCN}`, 0, 4, 'left', TOTAL_CN_BOLD, ROW_COUNT);
+    drawCell(`¥${data.total}`, 4, 2, 'right', true, ROW_COUNT, 24);
+  } else {
+    // BEFORE: CN 跨 cols 0-4，金额画在 col 6 备注列
+    drawCell(`合计人民币（大写）: ${data.totalCN}`, 0, TOTAL_SPAN, 'left', TOTAL_CN_BOLD, ROW_COUNT);
+    ctx.font = `bold 24px ${FONT}`;
+    ctx.fillStyle = INK;
+    ctx.textAlign = 'right';
+    const right = COL_X[6];
+    ctx.fillText(`¥${data.total}`, right - 10, HEADER_Y + ROW_H * (ROW_COUNT + 1) + ROW_H / 2);
+  }
+
+  // ── 签名行 ──
+  ctx.fillStyle = INK;
+  ctx.font = `22px ${FONT}`;
+  ctx.textBaseline = 'middle';
+  const sy = TABLE_BOTTOM + SIG_GAP;
+  ctx.textAlign = 'left';
+  ctx.fillText('开票人:', PADDING, sy);
+  ctx.fillText('收款人:', SIG_RIGHT_LABEL_X, sy);
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(PADDING + 100, sy + 18);
+  ctx.lineTo(PADDING + 260, sy + 18);
+  ctx.moveTo(SIG_RIGHT_LABEL_X + 100, sy + 18);
+  ctx.lineTo(SIG_RIGHT_LABEL_X + 260, sy + 18);
+  ctx.stroke();
+
+  // ── 右侧竖排文字（中文竖排：每个字单独画，竖直堆叠，正立） ──
+  ctx.save();
+  ctx.fillStyle = INK;
+  ctx.font = `20px ${FONT}`;
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'center';
+
+  const cx = W - 25;
+  const cyStart = HEADER_Y + 20;
+  const lineH = 20;
+  const groupGap = 30;  // 两组之间的额外间隙
+  // 字符顺序：存根（白） 客户（红）
+  const chars = ['存', '根', '（', '白', '）', '客', '户', '（', '红', '）'];
+
+  chars.forEach((char, i) => {
+    let offset = i * lineH;
+    if (i >= 5) offset += groupGap;  // 第二组往下多空 groupGap
+    const y = cyStart + offset;
+    ctx.fillText(char, cx, y);
+  });
+  ctx.restore();
+}
+
+// ─── 渲染 ───
+render(document.getElementById('before').getContext('2d'), BEFORE);
+render(document.getElementById('after').getContext('2d'), AFTER);
+</script>
+</body>
+</html>
