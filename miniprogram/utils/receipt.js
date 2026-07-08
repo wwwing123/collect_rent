@@ -79,8 +79,8 @@ export function buildReceiptData({ room, bill, prevBill, receiptNo, today }) {
   };
 }
 
-const W = 930;
-const H = 460;
+const W = 960;
+const H = 530;
 const PADDING = 70;
 const TABLE_W = W - PADDING * 2;
 
@@ -89,7 +89,7 @@ const INK = '#222';
 const NO_COLOR = '#ff8c00';
 const FONT = '"Microsoft YaHei", "微软雅黑", sans-serif';
 
-const COL_WIDTHS = [175, 85, 85, 120, 75, 160, 90];
+const COL_WIDTHS = [175, 85, 85, 120, 75, 160, 120];
 const COL_X = (() => {
   const xs = [PADDING];
   for (let i = 0; i < COL_WIDTHS.length; i++) xs.push(xs[i] + COL_WIDTHS[i]);
@@ -97,7 +97,7 @@ const COL_X = (() => {
 })();
 
 const HEADER_Y = 145;
-const ROW_H = 38;
+const ROW_H = 52;
 const TABLE_HEADERS = ['项 目', '上 月', '本 月', '实 用', '单 价', '金额小计(元)', '备 注'];
 const ROW_COUNT = 4; // 水费 / 电费 / 租金 / 拆分行(垃圾费+网络费)
 const TABLE_BOTTOM = HEADER_Y + ROW_H * (ROW_COUNT + 2); // +2 = header row + total row
@@ -116,7 +116,7 @@ const RECEIPT_ROWS = [
 const SKIP_VERTICALS = {
   3: [2, 3, 4],       // rent row: 描述跨 cols 1-4
   4: [2, 5],          // split row: 垃圾费跨 cols 1-2、网络费跨 cols 4-5
-  5: [1, 2, 3, 4, 6], // total row: CN 跨 cols 0-4、金额跨 cols 5-6
+  5: [1, 2, 3, 4],    // total row: CN 跨 cols 0-4；col 5 金额 + col 6 备注都是独立格
 };
 
 let currentRow = 0;
@@ -141,8 +141,8 @@ function drawHeader(ctx, { userName, receiptNo, date }) {
   ctx.fillStyle = INK;
   ctx.textBaseline = 'middle';
 
-  // 大标题：bold 40px，水平居中（W/2）
-  ctx.font = `bold 40px ${FONT}`;
+  // 大标题：bold 38px，水平居中（W/2）
+  ctx.font = `bold 38px ${FONT}`;
   ctx.textAlign = 'center';
   ctx.fillText('收  据', W / 2, 60);
 
@@ -190,20 +190,20 @@ function drawTableGrid(ctx) {
   ctx.strokeStyle = INK;
   ctx.beginPath();
 
-  // ── 横线（修复 bug A：补顶部；修复 bug C：补拆分行下边） ──
-  // 表格顶边
+  // ── 横线 ──
+  // 表格顶边（跨整宽）
   ctx.moveTo(left, HEADER_Y);
   ctx.lineTo(right, HEADER_Y);
-  // 表头下边
+  // 表头下边 = 合并备注格的顶部边界（跨整宽）
   ctx.moveTo(left, HEADER_Y + ROW_H);
   ctx.lineTo(right, HEADER_Y + ROW_H);
-  // 每个数据行下边（包括拆分行 = r=ROW_COUNT+1）
-  for (let r = 1; r <= ROW_COUNT + 1; r++) {
+  // 其余内部横线（不跨备注 col 6）
+  for (let r = 2; r <= ROW_COUNT + 1; r++) {
     const y = HEADER_Y + ROW_H * r;
     ctx.moveTo(left, y);
-    ctx.lineTo(right, y);
+    ctx.lineTo(COL_X[6], y);
   }
-  // 合计行下边
+  // 合计行下边（跨整宽）
   ctx.moveTo(left, TABLE_BOTTOM);
   ctx.lineTo(right, TABLE_BOTTOM);
 
@@ -227,7 +227,7 @@ function drawTableGrid(ctx) {
 
 function drawTableHeader(ctx) {
   ctx.fillStyle = INK;
-  ctx.font = `bold 22px ${FONT}`;
+  ctx.font = `bold 20px ${FONT}`;
   ctx.textBaseline = 'middle';
 
   const cy = HEADER_Y + ROW_H / 2;
@@ -235,20 +235,21 @@ function drawTableHeader(ctx) {
     let x, align;
     if (i === 0) { x = COL_X[i] + 10; align = 'left'; }
     else if (i === 5) { x = COL_X[i] + COL_WIDTHS[i] - 10; align = 'right'; }
-    else if (i === 6) { x = COL_X[i] + 10; align = 'left'; }
+    else if (i === 6) { x = (COL_X[i] + COL_X[i + 1]) / 2; align = 'center'; }
     else { x = (COL_X[i] + COL_X[i + 1]) / 2; align = 'center'; }
     ctx.textAlign = align;
     ctx.fillText(text, x, cy);
   });
 }
 
-function drawCell(ctx, text, colStart, span, align, bold, rowIdx, fontSize = 22) {
+function drawCell(ctx, text, colStart, span, align, bold, rowIdx, fontSize = 20) {
   const left = COL_X[colStart];
   const right = colStart + span < COL_X.length ? COL_X[colStart + span] : PADDING + TABLE_W;
   const width = right - left;
   let x;
-  if (align === 'left') x = left + 10;
-  else if (align === 'right') x = right - 10;
+  const padL = 14, padR = 14;  // 10→14
+  if (align === 'left') x = left + padL;
+  else if (align === 'right') x = right - padR;
   else x = left + width / 2;
   ctx.font = `${bold ? 'bold ' : ''}${fontSize}px ${FONT}`;
   ctx.fillStyle = INK;
@@ -284,8 +285,7 @@ function drawTableBody(ctx, rows) {
       drawCell(ctx, garbage.amount, 1, 1, 'right', false);
       drawCell(ctx, internet.label, 3, 1, 'left', false);
       drawCell(ctx, internet.amount, 4, 1, 'right', false);
-      const subtotal = (Number(garbage.amount) + Number(internet.amount)).toFixed(2);
-      drawCell(ctx, subtotal, 5, 1, 'right', false);
+      // （小计已移除：col 6 留给备注的合并格）
     }
   }
 }
@@ -294,14 +294,14 @@ function drawTableTotal(ctx, total, totalCN) {
   currentRow = ROW_COUNT;
   // CN 大写文字：cols 0-4（span 5），左对齐，bold
   drawCell(ctx, `合计人民币（大写）: ${totalCN}`, 0, 5, 'left', true, ROW_COUNT);
-  // ¥金额：cols 5-6（span 2），右对齐，bold 24px
-  drawCell(ctx, `¥${total}`, 5, 2, 'right', true, ROW_COUNT, 24);
+  // ¥金额：col 5（span 1），右对齐，bold 22px
+  drawCell(ctx, `¥${total}`, 5, 1, 'right', true, ROW_COUNT, 22);
 }
 
 function drawSignature(ctx) {
   ctx.save();
   ctx.fillStyle = INK;
-  ctx.font = `22px ${FONT}`;
+  ctx.font = `18px ${FONT}`;
   ctx.textBaseline = 'middle';
 
   const y = TABLE_BOTTOM + 30;  // SIG_GAP = 30
