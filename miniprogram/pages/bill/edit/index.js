@@ -49,8 +49,8 @@ Page({
     const maxYearMonth = maxSelectableYearMonth();
     this.setData({
       maxYearMonth,
-      canPrev: canShiftToPrev(yearMonth),
-      canNext: canShiftToNext(yearMonth),
+      canPrev: canShiftToPrev(shiftYearMonth(yearMonth, -1)),
+      canNext: canShiftToNext(shiftYearMonth(yearMonth, 1), yearMonth),
     });
 
     if (this.data.waterReading !== '' || this.data.elecReading !== '') {
