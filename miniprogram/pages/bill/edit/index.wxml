@@ -1,14 +1,16 @@
 <view class="container">
   <!-- 月份选择器 -->
   <view class="month-bar">
-    <view class="month-arrow" bindtap="onPrevMonth" hover-class="press">
+    <view class="month-arrow {{ canPrev ? '' : 'disabled' }}" bindtap="onPrevMonth" hover-class="{{ canPrev ? 'press' : 'none' }}">
       <text class="arrow">‹</text>
     </view>
-    <view class="month-display">
-      <text class="month-eyebrow">账目月份</text>
-      <text class="month-name">{{ monthLabel }}</text>
-    </view>
-    <view class="month-arrow" bindtap="onNextMonth" hover-class="press">
+    <picker mode="date" fields="month" value="{{ yearMonth }}" start="{{ minYearMonth }}" end="{{ maxYearMonth }}" bindchange="onPickMonth">
+      <view class="month-display month-display-picker" hover-class="press">
+        <text class="month-eyebrow">账目月份</text>
+        <text class="month-name">{{ monthLabel }}</text>
+      </view>
+    </picker>
+    <view class="month-arrow {{ canNext ? '' : 'disabled' }}" bindtap="onNextMonth" hover-class="{{ canNext ? 'press' : 'none' }}">
       <text class="arrow">›</text>
     </view>
   </view>
