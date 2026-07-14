@@ -1,6 +1,14 @@
 import { callRentApi } from '../../../utils/api.js';
 import { computeBill } from '../../../utils/billing.js';
-import { shiftYearMonth, formatYearMonthLabel, currentYearMonth } from '../../../utils/format.js';
+import {
+  MIN_YEAR_MONTH,
+  canShiftToPrev,
+  canShiftToNext,
+  currentYearMonth,
+  formatYearMonthLabel,
+  maxSelectableYearMonth,
+  shiftYearMonth,
+} from '../../../utils/format.js';
 
 Page({
   data: {
@@ -8,6 +16,10 @@ Page({
     room: null,
     yearMonth: '',
     monthLabel: '',
+    minYearMonth: MIN_YEAR_MONTH,
+    maxYearMonth: '',
+    canPrev: true,
+    canNext: true,
     waterReading: '',
     elecReading: '',
     prevWater: null,
@@ -32,6 +44,13 @@ Page({
       elecReading: bill?.elec_reading ?? '',
       prevWater: prev?.water_reading ?? null,
       prevElec: prev?.elec_reading ?? null,
+    });
+
+    const maxYearMonth = maxSelectableYearMonth();
+    this.setData({
+      maxYearMonth,
+      canPrev: canShiftToPrev(yearMonth),
+      canNext: canShiftToNext(yearMonth),
     });
 
     if (this.data.waterReading !== '' || this.data.elecReading !== '') {
@@ -69,14 +88,29 @@ Page({
     });
   },
 
+  _goToMonth(targetYM) {
+    const { roomId, yearMonth } = this.data;
+    if (!/^\d{4}-\d{2}$/.test(targetYM)) return;
+    if (targetYM === yearMonth) return;
+    if (!canShiftToPrev(targetYM)) return;
+    if (!canShiftToNext(targetYM)) return;
+    wx.redirectTo({ url: `/pages/bill/edit/index?roomId=${roomId}&yearMonth=${targetYM}` });
+  },
+
   onPrevMonth() {
-    const ym = shiftYearMonth(this.data.yearMonth, -1);
-    wx.redirectTo({ url: `/pages/bill/edit/index?roomId=${this.data.roomId}&yearMonth=${ym}` });
+    if (!this.data.canPrev) return;
+    this._goToMonth(shiftYearMonth(this.data.yearMonth, -1));
   },
 
   onNextMonth() {
-    const ym = shiftYearMonth(this.data.yearMonth, 1);
-    wx.redirectTo({ url: `/pages/bill/edit/index?roomId=${this.data.roomId}&yearMonth=${ym}` });
+    if (!this.data.canNext) return;
+    this._goToMonth(shiftYearMonth(this.data.yearMonth, 1));
+  },
+
+  onPickMonth(e) {
+    const value = e.detail.value || '';
+    const targetYM = value.length >= 7 ? value.slice(0, 7) : '';
+    this._goToMonth(targetYM);
   },
 
   async onSave() {
