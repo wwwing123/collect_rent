@@ -32,43 +32,6 @@
   letter-spacing: 0.04em;
 }
 
-/* —— 补录区 —— */
-.backfill {
-  background: var(--paper-2);
-  border: 1rpx solid var(--line);
-  border-radius: var(--r-md);
-  padding: var(--s-3);
-}
-.backfill-btn {
-  height: 84rpx;
-  background: var(--amber-tint);
-  border: 1rpx dashed rgba(234, 123, 58, 0.35);
-  border-radius: var(--r-pill);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--amber-2);
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
-}
-.backfill-btn.press {
-  background: var(--amber-soft);
-  border-color: var(--amber);
-  color: var(--amber-3);
-  opacity: 0.92;
-}
-.backfill-label {
-  font-size: var(--fs-base);
-  letter-spacing: 0.08em;
-  font-weight: 500;
-}
-.backfill-hint {
-  font-size: var(--fs-xs);
-  color: var(--ink-3);
-  margin-top: var(--s-2);
-  line-height: 1.6;
-  letter-spacing: 0.02em;
-}
-
 /* —— 表格 —— */
 .table {
   border: 1rpx solid var(--line);
