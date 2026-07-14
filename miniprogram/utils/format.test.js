@@ -5,6 +5,7 @@ import {
   maxSelectableYearMonth,
   canShiftToPrev,
   canShiftToNext,
+  isInRange,
 } from './format.js';
 
 test('MIN_YEAR_MONTH is 2018-01', () => {
@@ -32,4 +33,12 @@ test('canShiftToNext: false at max, true before', () => {
   assert.equal(canShiftToNext('2026-09', '2026-07'), false);
   assert.equal(canShiftToNext('2026-07', '2026-07'), true);
   assert.equal(canShiftToNext('2026-01', '2026-07'), true);
+});
+
+test('isInRange: closed [min, max] boundary', () => {
+  assert.equal(isInRange('2018-01', '2018-01', '2026-08'), true);
+  assert.equal(isInRange('2026-08', '2018-01', '2026-08'), true);
+  assert.equal(isInRange('2017-12', '2018-01', '2026-08'), false);
+  assert.equal(isInRange('2026-09', '2018-01', '2026-08'), false);
+  assert.equal(isInRange('2026-07', '2018-01', '2026-08'), true);
 });

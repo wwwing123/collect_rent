@@ -31,6 +31,10 @@ export function canShiftToNext(ym, currentYM) {
   return compareYearMonth(ym, maxSelectableYearMonth(currentYM)) < 0;
 }
 
+export function isInRange(ym, minYM, maxYM) {
+  return compareYearMonth(ym, minYM) >= 0 && compareYearMonth(ym, maxYM) <= 0;
+}
+
 export function formatYearMonthLabel(ym) {
   const [y, m] = ym.split('-').map(Number);
   return `${y} 年 ${m} 月`;
