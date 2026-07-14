@@ -35,7 +35,7 @@
 
   <view class="actions">
     <view class="action-btn primary {{ !isActive ? 'disabled' : '' }}" bindtap="onGenerate" hover-class="press">
-      <text class="action-label">生成账单</text>
+      <text class="action-label">数据录入</text>
     </view>
     <view class="action-btn ghost" bindtap="onHistory" hover-class="press">
       <text class="action-label">历史账单</text>
