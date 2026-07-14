@@ -28,6 +28,7 @@
   transition: background 0.15s ease, opacity 0.15s ease;
 }
 .month-arrow.press { background: var(--amber-soft); opacity: 0.85; }
+.month-arrow.disabled { opacity: 0.35; pointer-events: none; }
 .arrow {
   font-family: var(--font-serif);
   font-size: 40rpx;
@@ -54,6 +55,8 @@
   color: var(--ink);
   letter-spacing: 0.08em;
 }
+.month-display-picker { cursor: pointer; }
+.month-display-picker.press { opacity: 0.85; }
 
 /* —— 房号卡 —— */
 .room-card {
