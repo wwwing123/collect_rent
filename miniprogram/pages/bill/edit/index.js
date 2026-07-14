@@ -50,7 +50,7 @@ Page({
     this.setData({
       maxYearMonth,
       canPrev: canShiftToPrev(shiftYearMonth(yearMonth, -1)),
-      canNext: canShiftToNext(shiftYearMonth(yearMonth, 1), yearMonth),
+      canNext: canShiftToNext(shiftYearMonth(yearMonth, 1)),
     });
 
     if (this.data.waterReading !== '' || this.data.elecReading !== '') {
