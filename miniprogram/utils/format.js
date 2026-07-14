@@ -1,3 +1,5 @@
+export const MIN_YEAR_MONTH = '2018-01';
+
 export function currentYearMonth() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -14,6 +16,19 @@ export function shiftYearMonth(ym, delta) {
 
 export function compareYearMonth(a, b) {
   return a < b ? -1 : a > b ? 1 : 0;
+}
+
+export function maxSelectableYearMonth(currentYM) {
+  const ref = currentYM || currentYearMonth();
+  return shiftYearMonth(ref, 1);
+}
+
+export function canShiftToPrev(ym) {
+  return compareYearMonth(ym, MIN_YEAR_MONTH) > 0;
+}
+
+export function canShiftToNext(ym, currentYM) {
+  return compareYearMonth(ym, maxSelectableYearMonth(currentYM)) < 0;
 }
 
 export function formatYearMonthLabel(ym) {
