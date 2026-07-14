@@ -7,15 +7,7 @@
     </view>
   </view>
 
-  <!-- 补录 -->
-  <view class="backfill">
-    <picker mode="date" fields="month" value="{{ backfillYM }}" start="2018-01" end="2099-12" bindchange="onPickMonth">
-      <view class="backfill-btn" hover-class="press">
-        <text class="backfill-label">＋ 补录历史读数</text>
-      </view>
-    </picker>
-    <view class="backfill-hint">选择月份后跳转录入页。补录中间月份后再保存后续月份，会自动用最新的上月读数重算。</view>
-  </view>
+  <!-- 表格 -->
 
   <!-- 表格 -->
   <view class="table">
