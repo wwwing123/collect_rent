@@ -6,7 +6,6 @@ Page({
     roomId: '',
     roomLabel: '',
     history: [],
-    backfillYM: '',
     latestYM: '',
     latestWater: 0,
     latestElec: 0,
@@ -194,11 +193,6 @@ Page({
   onTapRow(e) {
     const { yearmonth } = e.currentTarget.dataset;
     wx.navigateTo({ url: `/pages/bill/edit/index?roomId=${this.data.roomId}&yearMonth=${yearmonth}` });
-  },
-
-  onPickMonth(e) {
-    const ym = e.detail.value;
-    wx.redirectTo({ url: `/pages/bill/edit/index?roomId=${this.data.roomId}&yearMonth=${ym}` });
   },
 
   async onExport() {
