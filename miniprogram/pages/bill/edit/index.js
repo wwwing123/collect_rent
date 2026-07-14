@@ -6,6 +6,7 @@ import {
   canShiftToNext,
   currentYearMonth,
   formatYearMonthLabel,
+  isInRange,
   maxSelectableYearMonth,
   shiftYearMonth,
 } from '../../../utils/format.js';
@@ -49,8 +50,8 @@ Page({
     const maxYearMonth = maxSelectableYearMonth();
     this.setData({
       maxYearMonth,
-      canPrev: canShiftToPrev(shiftYearMonth(yearMonth, -1)),
-      canNext: canShiftToNext(shiftYearMonth(yearMonth, 1)),
+      canPrev: canShiftToPrev(yearMonth),
+      canNext: canShiftToNext(yearMonth),
     });
 
     if (this.data.waterReading !== '' || this.data.elecReading !== '') {
@@ -89,11 +90,10 @@ Page({
   },
 
   _goToMonth(targetYM) {
-    const { roomId, yearMonth } = this.data;
+    const { roomId, yearMonth, maxYearMonth } = this.data;
     if (!/^\d{4}-\d{2}$/.test(targetYM)) return;
     if (targetYM === yearMonth) return;
-    if (!canShiftToPrev(targetYM)) return;
-    if (!canShiftToNext(targetYM)) return;
+    if (!isInRange(targetYM, MIN_YEAR_MONTH, maxYearMonth)) return;
     wx.redirectTo({ url: `/pages/bill/edit/index?roomId=${roomId}&yearMonth=${targetYM}` });
   },
 
