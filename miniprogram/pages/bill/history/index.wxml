@@ -8,8 +8,6 @@
   </view>
 
   <!-- 表格 -->
-
-  <!-- 表格 -->
   <view class="table">
     <view class="tr th">
       <text class="td col-month">月份</text>
