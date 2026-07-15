@@ -57,7 +57,6 @@
   background: var(--paper-2);
   border: 1rpx solid var(--line);
   box-shadow: var(--shadow-sm);
-  margin-top: 4rpx;
 }
 .settings-link.press { background: var(--paper-3); opacity: 0.85; }
 .settings-link-glyph {

@@ -75,10 +75,6 @@
   font-weight: 600;
   color: var(--amber);
 }
-.tr.highlight {
-  background: var(--amber-tint);
-  border-left: 4rpx solid var(--amber);
-}
 
 /* —— 区块标题 —— */
 .section-title {

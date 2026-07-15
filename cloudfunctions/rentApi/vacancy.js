@@ -22,7 +22,7 @@ function nextYM(ym) {
  */
 function computeVacancyBills(bills, roomId) {
   if (!Array.isArray(bills) || bills.length < 2) return [];
-  const sorted = [...bills].sort((a, b) => (a.year_month < b.year_month ? -1 : 1));
+  const sorted = [...bills].sort((a, b) => (a.year_month < b.year_month ? -1 : a.year_month > b.year_month ? 1 : 0));
   const result = [];
   for (let i = 0; i < sorted.length - 1; i++) {
     const a = sorted[i];
