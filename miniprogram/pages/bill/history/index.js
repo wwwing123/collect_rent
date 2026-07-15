@@ -37,6 +37,7 @@ Page({
         elec_fee: b.elec_fee,
         other: hasBreakdown ? (b.garbage_fee || 0) + (b.internet_fee || 0) : 0,
         total: b.total,
+        vacancy: !!b.vacancy,
       };
     });
     this.setData({ history });
@@ -188,6 +189,30 @@ Page({
         },
       ],
     });
+  },
+
+  async onSync() {
+    const { roomId, roomLabel } = this.data;
+    const res = await wx.showModal({
+      title: '同步数据',
+      content: `将补全当前房间【${roomLabel}】缺失的空置月份，是否继续？`,
+      confirmText: '确定',
+      cancelText: '取消',
+    });
+    if (!res.confirm) return;
+    wx.showLoading({ title: '同步中', mask: true });
+    try {
+      const { inserted } = await callRentApi('syncVacancyMonths', { roomId });
+      wx.hideLoading();
+      wx.showToast({
+        title: inserted > 0 ? `已补全 ${inserted} 条` : '已是最新，无需补全',
+        icon: inserted > 0 ? 'success' : 'none',
+      });
+      await this.refresh();
+    } catch (e) {
+      wx.hideLoading();
+      wx.showToast({ title: '同步失败', icon: 'none' });
+    }
   },
 
   onTapRow(e) {

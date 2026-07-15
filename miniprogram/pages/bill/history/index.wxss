@@ -182,8 +182,13 @@
 }
 
 /* —— 底部导出按钮 —— */
-.footer { padding: var(--s-3) 0 0; }
+.footer {
+  padding: var(--s-3) 0 0;
+  display: flex;
+  gap: var(--s-2);
+}
 .export-btn {
+  flex: 1;
   height: 96rpx;
   background: var(--ink);
   color: #FFFFFF;
@@ -200,4 +205,47 @@
   font-weight: 600;
   letter-spacing: 0.32em;
   padding-right: 0.32em;
+}
+
+/* —— 底部按钮区（同步 + 导出） —— */
+.sync-btn {
+  flex: 1;
+  height: 96rpx;
+  background: var(--paper-2);
+  color: var(--ink);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  transition: opacity 0.15s ease;
+}
+.sync-btn.press { opacity: 0.85; }
+.sync-label {
+  font-size: 30rpx;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  padding-right: 0.32em;
+  color: var(--ink);
+}
+
+/* —— 空置行 —— */
+.tr.tr-vacancy {
+  background: var(--paper-3);
+}
+.tr.tr-vacancy .td {
+  color: var(--ink-3);
+}
+.vacancy-tag {
+  display: inline-block;
+  margin-left: 8rpx;
+  padding: 2rpx 10rpx;
+  font-size: 18rpx;
+  color: var(--ink-3);
+  background: var(--paper-2);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-pill);
+  letter-spacing: 0.08em;
+  vertical-align: middle;
 }

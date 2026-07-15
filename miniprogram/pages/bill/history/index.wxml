@@ -18,12 +18,12 @@
       <text class="td col-total">合计</text>
     </view>
     <view wx:for="{{ history }}" wx:key="year_month"
-      class="tr {{ item.highlight ? 'highlight' : '' }}"
+      class="tr {{ item.vacancy ? 'tr-vacancy' : '' }}"
       hover-class="tr-hover"
       data-yearmonth="{{ item.year_month }}"
       bindtap="onTapRow"
     >
-      <text class="td col-month">{{ item.year_month }}</text>
+      <text class="td col-month">{{ item.year_month }}<text wx:if="{{ item.vacancy }}" class="vacancy-tag">空置</text></text>
       <text class="td tabular">{{ item.rent }}</text>
       <text class="td tabular">{{ item.water_fee }}</text>
       <text class="td tabular">{{ item.elec_fee }}</text>
@@ -70,6 +70,9 @@
   </view>
 
   <view class="footer">
+    <view class="sync-btn" bindtap="onSync" hover-class="press">
+      <text class="sync-label">↻ 同步数据</text>
+    </view>
     <view class="export-btn" bindtap="onExport" hover-class="press">
       <text class="export-label">↓ 导出 CSV</text>
     </view>
