@@ -3,6 +3,7 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 const _ = db.command;
 const { computeBill } = require('./billing');
+const { computeVacancyBills } = require('./vacancy');
 
 const SEED_ROOMS = [
   { code: '101',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, status: 'active' },
@@ -197,6 +198,7 @@ const handlers = {
 
     if (existing) {
       doc._openid = existing._openid;
+      doc.vacancy = false;
       await db.collection('bills').doc(existing._id).update({ data: doc });
       return { ok: true, _id: existing._id };
     } else {
@@ -214,6 +216,28 @@ const handlers = {
       .limit(limit)
       .get();
     return { bills: data };
+  }),
+  syncVacancyMonths: requireAuth(async ({ openid, event }) => {
+    const { roomId } = event;
+    let roomIds;
+    if (roomId) {
+      roomIds = [roomId];
+    } else {
+      const { data: rooms } = await db.collection('rooms').where({ status: 'active' }).get();
+      roomIds = rooms.map(r => r._id);
+    }
+    let inserted = 0;
+    for (const rid of roomIds) {
+      const { data: bills } = await db.collection('bills').where({ room_id: rid }).get();
+      const toInsert = computeVacancyBills(bills, rid);
+      for (const rec of toInsert) {
+        await db.collection('bills').add({
+          data: { ...rec, _openid: openid, created_at: new Date(), updated_at: new Date() },
+        });
+        inserted += 1;
+      }
+    }
+    return { syncedRooms: roomIds.length, inserted };
   }),
   exportCsv: requireAuth(async ({ event }) => {
     const { roomId } = event;
