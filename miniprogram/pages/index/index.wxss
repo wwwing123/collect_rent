@@ -64,6 +64,11 @@
   font-size: 30rpx;
   color: var(--ink-2);
 }
+.greeting-actions {
+  display: flex;
+  gap: var(--s-1);
+  margin-top: 4rpx;
+}
 
 /* —— 月份选择条 —— */
 .month-bar {

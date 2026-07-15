@@ -8,8 +8,13 @@
         <text class="summary-num tabular">¥{{ sumTotal }}</text>
       </view>
     </view>
-    <view wx:if="{{ isAdmin }}" class="settings-link" bindtap="onHeaderSettings" hover-class="press">
-      <text class="settings-link-glyph">⚙</text>
+    <view wx:if="{{ isAdmin }}" class="greeting-actions">
+      <view class="settings-link" bindtap="onSync" hover-class="press">
+        <text class="settings-link-glyph">↻</text>
+      </view>
+      <view class="settings-link" bindtap="onHeaderSettings" hover-class="press">
+        <text class="settings-link-glyph">⚙</text>
+      </view>
     </view>
   </view>
 
