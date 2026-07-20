@@ -12,13 +12,13 @@ test('MIN_YEAR_MONTH is 2018-01', () => {
   assert.equal(MIN_YEAR_MONTH, '2018-01');
 });
 
-test('maxSelectableYearMonth: explicit current +1 month', () => {
-  assert.equal(maxSelectableYearMonth('2026-07'), '2026-08');
-  assert.equal(maxSelectableYearMonth('2026-01'), '2026-02');
+test('maxSelectableYearMonth: caps at current month', () => {
+  assert.equal(maxSelectableYearMonth('2026-07'), '2026-07');
+  assert.equal(maxSelectableYearMonth('2026-01'), '2026-01');
 });
 
-test('maxSelectableYearMonth: cross year boundary', () => {
-  assert.equal(maxSelectableYearMonth('2026-12'), '2027-01');
+test('maxSelectableYearMonth: caps across year boundary', () => {
+  assert.equal(maxSelectableYearMonth('2026-12'), '2026-12');
 });
 
 test('canShiftToPrev: false at MIN_YEAR_MONTH, true after', () => {
@@ -31,7 +31,7 @@ test('canShiftToPrev: false at MIN_YEAR_MONTH, true after', () => {
 test('canShiftToNext: false at max, true before', () => {
   assert.equal(canShiftToNext('2026-08', '2026-07'), false);
   assert.equal(canShiftToNext('2026-09', '2026-07'), false);
-  assert.equal(canShiftToNext('2026-07', '2026-07'), true);
+  assert.equal(canShiftToNext('2026-07', '2026-07'), false);
   assert.equal(canShiftToNext('2026-01', '2026-07'), true);
 });
 

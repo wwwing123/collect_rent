@@ -20,7 +20,7 @@ export function compareYearMonth(a, b) {
 
 export function maxSelectableYearMonth(currentYM) {
   const ref = currentYM || currentYearMonth();
-  return shiftYearMonth(ref, 1);
+  return ref;
 }
 
 export function canShiftToPrev(ym) {
