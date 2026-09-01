@@ -12,6 +12,6 @@ export function computeBill(room, prevBill, current) {
     water_fee: waterFee,
     elec_fee:  elecFee,
     base_fee:  baseFee,
-    total:     round2(baseFee + waterFee + elecFee),
+    total:     Math.floor(round2(baseFee + waterFee + elecFee)),
   };
 }

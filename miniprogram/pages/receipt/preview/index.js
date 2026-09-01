@@ -11,14 +11,14 @@ Page({
   },
 
   async onLoad(options) {
-    const { roomId, receiptNo } = options;
+    const { roomId, receiptNo, yearMonth } = options;
     this.canvasNode = null;
     this.setData({ loading: true });
     try {
       const roomsRes = await callRentApi('getRooms');
       const room = roomsRes.rooms.find(r => r._id === roomId);
       if (!room) throw new Error('房间不存在');
-      const ym = currentYearMonth();
+      const ym = yearMonth || currentYearMonth();
       const [{ bill }, { prev }] = await Promise.all([
         callRentApi('getBill', { roomId, yearMonth: ym }),
         callRentApi('getPrevBill', { roomId, yearMonth: ym }),

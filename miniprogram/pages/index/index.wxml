@@ -20,13 +20,13 @@
 
   <!-- 月份选择 -->
   <view class="month-bar">
-    <view class="month-arrow" bindtap="onPrevMonth" hover-class="press">
+    <view class="month-arrow {{ canPrev ? '' : 'disabled' }}" bindtap="onPrevMonth" hover-class="{{ canPrev ? 'press' : 'none' }}">
       <text class="arrow-glyph">‹</text>
     </view>
     <view class="month-display">
       <text class="month-name">{{ currentYM }}</text>
     </view>
-    <view class="month-arrow" bindtap="onNextMonth" hover-class="press">
+    <view class="month-arrow {{ canNext ? '' : 'disabled' }}" bindtap="onNextMonth" hover-class="{{ canNext ? 'press' : 'none' }}">
       <text class="arrow-glyph">›</text>
     </view>
   </view>

@@ -40,6 +40,20 @@ test('rounds to 2 decimal places', () => {
   assert.equal(bill.water_fee, 0.33);
 });
 
+test('total is floored to whole yuan', () => {
+  const room = { ...baseRoom, water_unit_price: 3.33 };
+  const bill = computeBill(room, { water_reading: 0, elec_reading: 0 }, { water_reading: 0.1, elec_reading: 0 });
+  // 560 + 0.33 + 0 = 560.33 → 向下取整 → 560
+  assert.equal(bill.total, 560);
+});
+
+test('total floors even when float noise present', () => {
+  const room = { ...baseRoom, rent: 500.1, garbage_fee: 10.2, internet_fee: 50.3 };
+  const bill = computeBill(room, null, { water_reading: 0, elec_reading: 0 });
+  // 560.6 → 560
+  assert.equal(bill.total, 560);
+});
+
 test('subsequent months chain correctly after backfill', () => {
   // No prior bill → first bill: usage = 0
   const first = computeBill(baseRoom, null, { water_reading: 100, elec_reading: 2000 });

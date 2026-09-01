@@ -4,6 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test miniprogram/utils/billing.test.js miniprogram/utils/receipt.test.js miniprogram/utils/format.test.js cloudfunctions/rentApi/vacancy.test.js"
+    "test": "node --test miniprogram/utils/billing.test.js miniprogram/utils/receipt.test.js miniprogram/utils/format.test.js cloudfunctions/rentApi/vacancy.test.js cloudfunctions/rentApi/billing.test.js"
   }
 }

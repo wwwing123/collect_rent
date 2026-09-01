@@ -67,8 +67,10 @@ Page({
   recalc() {
     const { room, prevWater, prevElec, waterReading, elecReading } = this.data;
     if (waterReading === '' || elecReading === '') {
+      // 无读数时只收基础费；total 与 computeBill 口径一致（向下取整）
+      const base = computeBill(room, null, { water_reading: 0, elec_reading: 0 });
       this.setData({
-        breakdown: { water_fee: 0, elec_fee: 0, base_fee: room.rent + room.garbage_fee + room.internet_fee, total: room.rent + room.garbage_fee + room.internet_fee, water_usage: 0, elec_usage: 0, garbage_fee: room.garbage_fee, internet_fee: room.internet_fee },
+        breakdown: { ...base, water_usage: 0, elec_usage: 0, garbage_fee: room.garbage_fee, internet_fee: room.internet_fee },
       });
       return;
     }

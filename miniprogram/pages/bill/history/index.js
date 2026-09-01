@@ -36,7 +36,8 @@ Page({
         water_fee: b.water_fee,
         elec_fee: b.elec_fee,
         other: hasBreakdown ? (b.garbage_fee || 0) + (b.internet_fee || 0) : 0,
-        total: b.total,
+        // 存量账单 total 可能带小数（旧口径），展示统一向下取整
+        total: Math.floor(b.total || 0),
         vacancy: !!b.vacancy,
       };
     });

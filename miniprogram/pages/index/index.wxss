@@ -89,6 +89,7 @@
   border-radius: 50%;
   transition: background 0.15s ease, opacity 0.15s ease;
 }
+.month-arrow.disabled .arrow-glyph { color: var(--ink-3); opacity: 0.35; }
 .month-arrow.press { background: var(--paper-3); opacity: 0.85; }
 .arrow-glyph {
   font-family: var(--font-serif);

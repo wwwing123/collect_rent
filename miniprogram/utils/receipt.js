@@ -19,6 +19,16 @@ export function formatReceiptDate(date) {
   return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
 }
 
+// 房租行月份标签：收据在 N 月开，收的是「N+1 月房租」（跨年自动进位）。
+// 账单月份缺失时返回空串（绘制层跳过）。
+export function rentMonthLabel(yearMonth) {
+  if (!yearMonth || !/^\d{4}-\d{2}$/.test(yearMonth)) return '';
+  const [y, m] = yearMonth.split('-').map(Number);
+  const nextM = m === 12 ? 1 : m + 1;
+  const nextY = m === 12 ? y + 1 : y;
+  return `${nextY}年${nextM}月份房租`;
+}
+
 export function formatAmount(n) {
   const v = Number(n) || 0;
   return v.toFixed(2);
@@ -74,8 +84,10 @@ export function buildReceiptData({ room, bill, prevBill, receiptNo, today }) {
     receiptNo: formatReceiptNo(receiptNo),
     date: formatReceiptDate(today),
     rows,
-    total: formatAmount(bill?.total ?? 0),
-    totalCN: formatCNY(bill?.total ?? 0),
+    rentMonthLabel: rentMonthLabel(bill?.year_month),
+    // 存量账单 total 可能带小数（旧口径），展示层统一向下取整到元
+    total: formatAmount(Math.floor(Number(bill?.total ?? 0))),
+    totalCN: formatCNY(Math.floor(Number(bill?.total ?? 0))),
   };
 }
 
@@ -170,7 +182,7 @@ function drawHeader(ctx, { userName, receiptNo, date }) {
   ctx.restore();
 }
 
-function drawTable(ctx, { rows, total, totalCN }) {
+function drawTable(ctx, { rows, rentMonthLabel, total, totalCN }) {
   ctx.save();
   ctx.fillStyle = INK;
   ctx.strokeStyle = INK;
@@ -179,7 +191,7 @@ function drawTable(ctx, { rows, total, totalCN }) {
 
   drawTableGrid(ctx);
   drawTableHeader(ctx);
-  drawTableBody(ctx, rows);
+  drawTableBody(ctx, rows, rentMonthLabel);
   drawTableTotal(ctx, total, totalCN);
   ctx.restore();
 }
@@ -259,17 +271,14 @@ function drawCell(ctx, text, colStart, span, align, bold, rowIdx, fontSize = 20)
   ctx.fillText(text || '', x, HEADER_Y + ROW_H * (r + 1) + ROW_H / 2);
 }
 
-function drawTableBody(ctx, rows) {
-  const today = new Date();
-  const monthLabel = `${today.getFullYear()}年${today.getMonth() + 1}月份房租`;
-
+function drawTableBody(ctx, rows, rentMonthLabel) {
   for (let r = 0; r < ROW_COUNT; r++) {
     currentRow = r;
     if (r < 3) {
       const row = rows[r];
       if (r === 2) {
         drawCell(ctx, row.label, 0, 1, 'left', false);
-        drawCell(ctx, monthLabel, 1, 4, 'center', false);
+        drawCell(ctx, rentMonthLabel, 1, 4, 'center', false);
         drawCell(ctx, row.amount, 5, 1, 'right', false);
       } else {
         drawCell(ctx, row.label, 0, 1, 'left', false);

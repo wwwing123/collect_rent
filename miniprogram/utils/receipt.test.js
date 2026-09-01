@@ -7,6 +7,7 @@ import {
   formatAmount,
   formatCNY,
   buildReceiptData,
+  rentMonthLabel,
 } from './receipt.js';
 
 test('getReceiptUserName: 普通房间 拼接房号', () => {
@@ -118,8 +119,8 @@ test('buildReceiptData: 完整账单（含上期）', () => {
   assert.equal(rent.prev, '');
   assert.equal(rent.amount, '1400.00');
 
-  assert.equal(data.total, '1837.17');
-  assert.equal(data.totalCN, '壹仟捌佰叁拾柒.壹柒圆整');
+  assert.equal(data.total, '1837.00');
+  assert.equal(data.totalCN, '壹仟捌佰叁拾柒圆整');
 });
 
 test('buildReceiptData: 首月（无上期）', () => {
@@ -142,10 +143,49 @@ test('buildReceiptData: 首月（无上期）', () => {
   assert.equal(data.totalCN, '伍佰陆拾圆整');
 });
 
+test('buildReceiptData: 旧账单带小数的 total 展示时向下取整', () => {
+  const room = { code: '101', name: '', water_unit_price: 3, elec_unit_price: 0.6 };
+  const bill = {
+    year_month: '2026-08',
+    water_reading: 100, elec_reading: 2000,
+    water_fee: 15.5, elec_fee: 24.99,
+    rent: 500, garbage_fee: 10, internet_fee: 50,
+    total: 600.49, // 存量数据未取整
+  };
+  const data = buildReceiptData({ room, bill, prevBill: null, receiptNo: 5, today: new Date(2026, 8, 10) });
+  assert.equal(data.total, '600.00');
+  assert.equal(data.totalCN, '陆佰圆整');
+});
+
 test('buildReceiptData: 账单字段缺失时安全降级', () => {
   const data = buildReceiptData({ room: null, bill: null, prevBill: null, receiptNo: 5, today: new Date(2026, 0, 1) });
   assert.equal(data.receiptNo, '000005');
   assert.equal(data.rows.every(r => r.amount === '0.00' && r.prev === '' && r.curr === '' && r.unit === ''), true);
   assert.equal(data.total, '0.00');
   assert.equal(data.totalCN, '零圆整');
+});
+
+test('rentMonthLabel: 账单月份 +1（跨年）', () => {
+  assert.equal(rentMonthLabel('2026-08'), '2026年9月份房租');
+  assert.equal(rentMonthLabel('2026-12'), '2027年1月份房租');
+  assert.equal(rentMonthLabel('2026-11'), '2026年12月份房租');
+});
+
+test('rentMonthLabel: 账单月份缺失时返回空串', () => {
+  assert.equal(rentMonthLabel(undefined), '');
+  assert.equal(rentMonthLabel(null), '');
+  assert.equal(rentMonthLabel(''), '');
+});
+
+test('buildReceiptData: 输出房租行月份标签（账单月+1）', () => {
+  const room = { code: '101', name: '', water_unit_price: 3, elec_unit_price: 0.6 };
+  const bill = {
+    year_month: '2026-08',
+    water_reading: 100, elec_reading: 2000,
+    water_fee: 0, elec_fee: 0,
+    rent: 500, garbage_fee: 10, internet_fee: 50,
+    total: 560,
+  };
+  const data = buildReceiptData({ room, bill, prevBill: null, receiptNo: 5, today: new Date(2026, 8, 10) });
+  assert.equal(data.rentMonthLabel, '2026年9月份房租');
 });
