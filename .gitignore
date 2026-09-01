@@ -3,3 +3,7 @@ miniprogram_npm/
 .superpowers/brainstorm/
 .DS_Store
 *.log
+
+# snc-project-sync managed（产物不入 git，源见 .dsh/.snc-manifest.json）
+.dsh/
+AGENTS.md
