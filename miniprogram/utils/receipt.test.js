@@ -15,8 +15,13 @@ test('getReceiptUserName: 普通房间 拼接房号', () => {
   assert.equal(getReceiptUserName(room), '南东新村6巷92号 101 A栋403房');
 });
 
-test('getReceiptUserName: 旧屋 只用 room.name', () => {
-  const room = { code: '旧屋', name: '朗枝岗170号' };
+test('getReceiptUserName: 朗枝岗170号（独立房产）不加南东新村前缀', () => {
+  const room = { code: '朗枝岗170号', name: '朗枝岗170号' };
+  assert.equal(getReceiptUserName(room), '朗枝岗170号');
+});
+
+test('getReceiptUserName: 朗枝岗170号 name 为空时直接用 code', () => {
+  const room = { code: '朗枝岗170号', name: '' };
   assert.equal(getReceiptUserName(room), '朗枝岗170号');
 });
 

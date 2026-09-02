@@ -12,7 +12,7 @@ const SEED_ROOMS = [
   { code: '302',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, status: 'active' },
   { code: '401',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, status: 'active' },
   { code: '402',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, status: 'active' },
-  { code: '旧屋',  name: '朗枝岗170号', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, status: 'active' },
+  { code: '朗枝岗170号',  name: '', rent: 0, water_unit_price: 0, elec_unit_price: 0, garbage_fee: 0, internet_fee: 0, status: 'active' },
 ];
 
 async function isAuthorized(openid) {

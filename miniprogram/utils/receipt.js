@@ -4,7 +4,8 @@ const DIGITS = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '
 const UNITS = ['', '拾', '佰', '仟'];
 export function getReceiptUserName(room) {
   if (!room) return PROPERTY_ADDRESS;
-  if (room.code === '旧屋') return room.name || '';
+  // 朗枝岗170号是独立房产（与南东新村6巷92号无关），收据不加南东新村前缀
+  if (room.code === '朗枝岗170号') return room.name || room.code;
   const code = room.code ? ` ${room.code}` : '';
   const name = room.name ? ` ${room.name}` : '';
   return `${PROPERTY_ADDRESS}${code}${name}`;
