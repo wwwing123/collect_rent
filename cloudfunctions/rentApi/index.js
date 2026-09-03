@@ -239,36 +239,6 @@ const handlers = {
     }
     return { syncedRooms: roomIds.length, inserted };
   }),
-  exportCsv: requireAuth(async ({ event }) => {
-    const { roomId } = event;
-    if (!roomId) return { errCode: 'INVALID_INPUT' };
-
-    const roomRes = await db.collection('rooms').doc(roomId).get();
-    const room = roomRes.data;
-    if (!room) return { errCode: 'ROOM_NOT_FOUND' };
-
-    const { data: bills } = await db.collection('bills').where({ room_id: roomId })
-      .orderBy('year_month', 'asc').get();
-
-    const header = 'year_month,water_reading,water_fee,elec_reading,elec_fee,base_fee,total\n';
-    const rows = bills.map(b =>
-      [b.year_month, b.water_reading, b.water_fee, b.elec_reading, b.elec_fee, b.base_fee, b.total].join(',')
-    ).join('\n');
-    const csv = header + rows + '\n';
-
-    const fileName = `rent-${room.code}-${Date.now()}.csv`;
-    const upload = await cloud.uploadFile({
-      cloudPath: `exports/${fileName}`,
-      fileContent: Buffer.from(csv, 'utf-8'),
-    });
-
-    // 24h 后清理
-    setTimeout(async () => {
-      try { await cloud.deleteFile({ fileList: [upload.fileID] }); } catch (e) {}
-    }, 24 * 60 * 60 * 1000);
-
-    return { fileID: upload.fileID };
-  }),
   getInviteCode: requireAuth(async () => {
     return { code: await setInviteCode() };
   }),

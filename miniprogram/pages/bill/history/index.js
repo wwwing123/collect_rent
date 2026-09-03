@@ -220,21 +220,4 @@ Page({
     const { yearmonth } = e.currentTarget.dataset;
     wx.navigateTo({ url: `/pages/bill/edit/index?roomId=${this.data.roomId}&yearMonth=${yearmonth}` });
   },
-
-  async onExport() {
-    wx.showLoading({ title: '生成中...' });
-    try {
-      const { fileID } = await callRentApi('exportCsv', { roomId: this.data.roomId });
-      const dl = await wx.cloud.downloadFile({ fileID });
-      wx.hideLoading();
-      await wx.openDocument({
-        filePath: dl.tempFilePath,
-        fileType: 'csv',
-        showMenu: true,
-      });
-    } catch (e) {
-      wx.hideLoading();
-      wx.showToast({ title: '导出失败', icon: 'none' });
-    }
-  },
 });

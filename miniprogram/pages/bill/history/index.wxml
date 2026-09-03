@@ -73,8 +73,5 @@
     <view class="sync-btn" bindtap="onSync" hover-class="press">
       <text class="sync-label">↻ 同步数据</text>
     </view>
-    <view class="export-btn" bindtap="onExport" hover-class="press">
-      <text class="export-label">↓ 导出 CSV</text>
-    </view>
   </view>
 </view>
