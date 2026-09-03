@@ -23,16 +23,28 @@
     <view class="month-arrow {{ canPrev ? '' : 'disabled' }}" bindtap="onPrevMonth" hover-class="{{ canPrev ? 'press' : 'none' }}">
       <text class="arrow-glyph">‹</text>
     </view>
-    <view class="month-display">
-      <text class="month-name">{{ currentYM }}</text>
-    </view>
+    <picker mode="date" fields="month" value="{{ currentYM }}" start="{{ minYearMonth }}" end="{{ maxYearMonth }}" bindchange="onPickMonth">
+      <view class="month-display" hover-class="press">
+        <text class="month-name">{{ currentYM }}</text>
+        <text class="month-hint">▾</text>
+      </view>
+    </picker>
     <view class="month-arrow {{ canNext ? '' : 'disabled' }}" bindtap="onNextMonth" hover-class="{{ canNext ? 'press' : 'none' }}">
       <text class="arrow-glyph">›</text>
     </view>
   </view>
 
   <!-- 房间列表 -->
-  <view class="cards">
+  <view wx:if="{{ loading }}" class="loading-box">
+    <view class="loading-dots">
+      <view class="dot dot-1"></view>
+      <view class="dot dot-2"></view>
+      <view class="dot dot-3"></view>
+    </view>
+    <text class="loading-text">{{ currentYM }} 账本展开中...</text>
+  </view>
+
+  <view wx:else class="cards">
     <room-card
       wx:for="{{ rooms }}"
       wx:key="_id"

@@ -101,13 +101,23 @@
 .month-display {
   display: flex;
   align-items: center;
+  gap: 8rpx;
+  padding: var(--s-1) var(--s-2);
+  border-radius: var(--r-md);
+  transition: background 0.15s ease;
 }
+.month-display.press { background: var(--paper-3); }
 .month-name {
   font-family: var(--font-serif);
   font-size: 32rpx;
   font-weight: 600;
   color: var(--ink);
   letter-spacing: 0.08em;
+}
+.month-hint {
+  font-size: 22rpx;
+  color: var(--amber);
+  line-height: 1;
 }
 
 /* —— 房间列表 —— */
@@ -116,4 +126,36 @@
   flex-direction: column;
   gap: var(--s-2);
   margin-top: var(--s-1);
+}
+
+/* —— 加载态 —— */
+.loading-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-8) 0;
+  gap: var(--s-3);
+}
+.loading-dots {
+  display: flex;
+  gap: 12rpx;
+}
+.dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  background: var(--amber);
+  animation: dot-bounce 1s ease-in-out infinite;
+}
+.dot-2 { animation-delay: 0.15s; }
+.dot-3 { animation-delay: 0.3s; }
+@keyframes dot-bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.35; }
+  40% { transform: scale(1); opacity: 1; }
+}
+.loading-text {
+  font-size: var(--fs-sm);
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
 }

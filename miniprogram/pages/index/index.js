@@ -1,10 +1,13 @@
 import { callRentApi } from '../../utils/api.js';
 import { isAdmin } from '../../utils/auth.js';
 import {
+  MIN_YEAR_MONTH,
   canShiftToPrev,
   canShiftToNext,
   currentYearMonth,
   formatYearMonthLabel,
+  isInRange,
+  maxSelectableYearMonth,
   shiftYearMonth,
 } from '../../utils/format.js';
 
@@ -19,6 +22,9 @@ Page({
     isAdmin: false,
     canPrev: true,
     canNext: false,
+    minYearMonth: MIN_YEAR_MONTH,
+    maxYearMonth: '',
+    loading: false,
   },
 
   async onShow() {
@@ -40,6 +46,7 @@ Page({
     this._ym = ym;
     this.setData({
       currentYM: ym,
+      maxYearMonth: maxSelectableYearMonth(),
       canPrev: canShiftToPrev(ym),
       canNext: canShiftToNext(ym),
     });
@@ -49,16 +56,26 @@ Page({
 
     if (cached && cached.ym === ym) {
       this.render(cached.rooms, ym);
+    } else {
+      // 无缓存：清空旧月数据并进入 loading 态，避免显示上月数据误导
+      this.setData({ loading: true, rooms: [], sumTotal: '0.00', pendingCount: 0 });
     }
 
     try {
       const { rooms } = await callRentApi('getRooms');
       const billPromises = rooms.map(r => callRentApi('getBill', { roomId: r._id, yearMonth: ym }).then(res => ({ room: r, bill: res.bill })));
       const bills = await Promise.all(billPromises);
+      // 快速连续切换月份时，丢弃过期的请求结果
+      if (this._ym !== ym) return;
       wx.setStorageSync(cacheKey, { ym, rooms: bills });
       this.render(bills, ym);
     } catch (e) {
       console.error(e);
+      if (this._ym === ym && !(cached && cached.ym === ym)) {
+        wx.showToast({ title: '加载失败，请重试', icon: 'none' });
+      }
+    } finally {
+      if (this._ym === ym) this.setData({ loading: false });
     }
   },
 
@@ -122,6 +139,15 @@ Page({
   onNextMonth() {
     if (!this.data.canNext) return;
     this.loadMonth(shiftYearMonth(this._ym, 1));
+  },
+
+  onPickMonth(e) {
+    const value = e.detail.value || '';
+    const targetYM = value.length >= 7 ? value.slice(0, 7) : '';
+    if (!/^\d{4}-\d{2}$/.test(targetYM)) return;
+    if (targetYM === this._ym) return;
+    if (!isInRange(targetYM, MIN_YEAR_MONTH, maxSelectableYearMonth())) return;
+    this.loadMonth(targetYM);
   },
 
   onSettings(e) {
