@@ -46,6 +46,28 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* 本月水电用量：水/电配色与历史页趋势图一致 */
+.greeting-usage {
+  margin-top: 8rpx;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+}
+.usage-label,
+.usage-item {
+  font-size: var(--fs-sm);
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+.usage-num {
+  font-family: var(--font-num);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.usage-water { color: #4A8FB8; }
+.usage-elec { color: #E5854A; }
+
 .settings-link {
   flex: 0 0 64rpx;
   width: 64rpx;

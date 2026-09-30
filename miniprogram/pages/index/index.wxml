@@ -7,6 +7,11 @@
         <text class="summary-text">共 {{ rooms.length }} 间房 · 本月应收</text>
         <text class="summary-num tabular">¥{{ sumTotal }}</text>
       </view>
+      <view class="greeting-usage">
+        <text class="usage-label">本月水电 ·</text>
+        <text class="usage-item">水 <text class="usage-num usage-water tabular">{{ waterUsage }}</text> 吨</text>
+        <text class="usage-item">电 <text class="usage-num usage-elec tabular">{{ elecUsage }}</text> 度</text>
+      </view>
     </view>
     <view wx:if="{{ isAdmin }}" class="greeting-actions">
       <view class="settings-link" bindtap="onSync" hover-class="press">

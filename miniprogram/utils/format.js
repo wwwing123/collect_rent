@@ -43,3 +43,8 @@ export function formatYearMonthLabel(ym) {
 export function formatMoney(n) {
   return Number(n || 0).toFixed(2);
 }
+
+/** 用量展示：最多 2 位小数，去掉多余的 0（12 → 12，12.30 → 12.3，12.345 → 12.35） */
+export function formatUsage(n) {
+  return String(Math.round((Number(n) || 0) * 100) / 100);
+}

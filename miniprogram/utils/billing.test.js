@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { computeBill } from './billing.js';
+import { computeBill, computeUsage, sumUsage } from './billing.js';
 
 const baseRoom = {
   rent: 500,
@@ -62,4 +62,50 @@ test('subsequent months chain correctly after backfill', () => {
   const second = computeBill(baseRoom, { water_reading: 100, elec_reading: 2000 }, { water_reading: 110, elec_reading: 2050 });
   assert.equal(second.water_fee, 30);
   assert.equal(second.elec_fee, 30);
+});
+
+test('computeUsage: no bill for the month means zero usage', () => {
+  assert.deepEqual(computeUsage({ water_reading: 10, elec_reading: 100 }, null), { water: 0, elec: 0 });
+});
+
+test('computeUsage: first bill without prev means zero usage', () => {
+  const usage = computeUsage(null, { water_reading: 10, elec_reading: 100 });
+  assert.deepEqual(usage, { water: 0, elec: 0 });
+});
+
+test('computeUsage: usage is current reading minus prev reading', () => {
+  const usage = computeUsage(
+    { water_reading: 10, elec_reading: 100 },
+    { water_reading: 17.5, elec_reading: 452 },
+  );
+  assert.deepEqual(usage, { water: 7.5, elec: 352 });
+});
+
+test('computeUsage: usage never negative', () => {
+  const usage = computeUsage(
+    { water_reading: 100, elec_reading: 2000 },
+    { water_reading: 90, elec_reading: 1990 },
+  );
+  assert.deepEqual(usage, { water: 0, elec: 0 });
+});
+
+test('sumUsage: rooms missing a bill contribute nothing', () => {
+  const usage = sumUsage([
+    { prev: { water_reading: 10, elec_reading: 100 }, bill: { water_reading: 15, elec_reading: 140 } },
+    { prev: { water_reading: 5, elec_reading: 50 }, bill: null },
+  ]);
+  assert.deepEqual(usage, { water: 5, elec: 40 });
+});
+
+test('sumUsage: adds usage across rooms', () => {
+  const usage = sumUsage([
+    { prev: { water_reading: 0, elec_reading: 0 }, bill: { water_reading: 12, elec_reading: 300 } },
+    { prev: { water_reading: 0, elec_reading: 0 }, bill: { water_reading: 0.5, elec_reading: 45 } },
+  ]);
+  assert.equal(usage.water, 12.5);
+  assert.equal(usage.elec, 345);
+});
+
+test('sumUsage: empty list is zero', () => {
+  assert.deepEqual(sumUsage([]), { water: 0, elec: 0 });
 });
