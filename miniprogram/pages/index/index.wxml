@@ -20,6 +20,9 @@
       <view class="settings-link" bindtap="onHeaderSettings" hover-class="press">
         <text class="settings-link-glyph">⚙</text>
       </view>
+      <view class="settings-link" bindtap="onSubscribeReminder" hover-class="press">
+        <text class="settings-link-glyph">🔔</text>
+      </view>
     </view>
   </view>
 

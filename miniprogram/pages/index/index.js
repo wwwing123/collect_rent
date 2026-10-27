@@ -122,6 +122,23 @@ Page({
     wx.navigateTo({ url: '/pages/settings/index' });
   },
 
+  // 订阅抄表提醒：每点一次并「允许」攒 1 条额度，月末当天会发 2 条（18:00/21:00）
+  // 多点几次可攒多条，避免 21:00 那条因额度不足收不到
+  async onSubscribeReminder() {
+    const TEMPLATE_ID = 'J9g9WGKUHvl40BGLE-k6LZIUTojypWyV8qs2vC7Rudw';
+    try {
+      const res = await wx.requestSubscribeMessage({ tmplIds: [TEMPLATE_ID] });
+      if (res[TEMPLATE_ID] === 'accept') {
+        wx.showToast({ title: '已订阅，多点几次攒额度', icon: 'none' });
+      } else {
+        wx.showToast({ title: '已拒绝，将收不到提醒', icon: 'none' });
+      }
+    } catch (e) {
+      // errMsg 可能是 requestSubscribeMessage:fail 禁用/用户关闭订阅功能
+      wx.showToast({ title: '订阅不可用，请检查设置', icon: 'none' });
+    }
+  },
+
   async onSync() {
     const { rooms } = this.data;
     const activeCount = rooms.filter(r => r.room && r.room.status === 'active').length;
