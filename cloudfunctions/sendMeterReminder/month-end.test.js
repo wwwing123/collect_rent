@@ -38,6 +38,10 @@ test('UTC 边界：UTC 16:00（北京 7/31 00:00）按次日算，7/31 判定为
   assert.equal(isLastDayOfMonthBeijing(new Date('2026-07-30T16:00:00Z')), true);
 });
 
+test('4月30日是月末（30天月份）', () => {
+  assert.equal(isLastDayOfMonthBeijing(new Date('2026-04-30T10:00:00Z')), true);
+});
+
 test('formatBeijingTime：time2 格式（北京 18:00）', () => {
   assert.equal(formatBeijingTime(new Date('2026-07-31T10:00:00Z')), '2026年7月31日 18:00');
 });
