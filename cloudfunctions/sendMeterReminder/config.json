@@ -1,0 +1,19 @@
+{
+  "triggers": [
+    {
+      "name": "meterReminderEvening",
+      "type": "timer",
+      "config": "0 0 10 * * * *"
+    },
+    {
+      "name": "meterReminderNight",
+      "type": "timer",
+      "config": "0 0 13 * * * *"
+    }
+  ],
+  "permissions": {
+    "openapi": [
+      "subscribeMessage.send"
+    ]
+  }
+}
